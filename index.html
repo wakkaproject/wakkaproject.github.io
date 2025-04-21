@@ -4,69 +4,112 @@
 <head>
   <meta charset="UTF-8">
   <title>WAKKA NFT PROJECT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { font-family: sans-serif; margin: 0; background: #f9f9f9; color: #222; }
-    header img { width: 100%; max-height: 400px; object-fit: cover; }
+    header img { width: 100%; max-height: 400px; object-fit: cover; display: block; }
+    .counter { text-align: center; padding: 1rem; background: #fff; font-size: 0.95rem; color: #666; }
     section { padding: 2rem 1rem; max-width: 1000px; margin: auto; }
     h1, h2 { text-align: center; }
+    .cat-profile { display: flex; flex-wrap: wrap; gap: 2rem; margin-bottom: 3rem; align-items: center; }
+    .cat-profile img { width: 100%; max-width: 250px; border-radius: 10px; }
+    .cat-desc { flex: 1; min-width: 250px; }
     .nft-cards { display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center; }
     .nft-card { border: 1px solid #ccc; padding: 1rem; border-radius: 10px; background: #fff; width: 280px; text-align: center; }
     .nft-card img { width: 100%; border-radius: 10px; }
-    .counter { text-align: center; margin-top: 3rem; font-size: 0.95rem; color: #666; }
     .faq { background: #fff; border-radius: 10px; padding: 1.5rem; margin-top: 3rem; }
     .faq h3 { margin-top: 1rem; }
     footer { text-align: center; padding: 2rem; font-size: 0.9rem; color: #555; }
     .sns a { margin: 0 10px; text-decoration: none; }
+    @media(max-width: 768px) {
+      .cat-profile { flex-direction: column; align-items: center; }
+    }
   </style>
 </head>
 <body>
 
+  <header>
+    <img src="img/cats/wakkabanner.png" alt="WAKKA Banner">
+  </header>
+
+  <div class="counter">
+    Visitors today: <span id="todayCount">-</span> / Total visitors: <span id="totalCount">-</span>
+  </div>
+
   <section>
-    <h2>Wakka Cats</h2>
-    <div class="nft-cards">
-      <div class="nft-card">
-        <img src="img/cats/WAKKA_000.png" alt="WAKKA #000">
-        <p>WAKKA #000 - The Original</p>
-        <a href="https://opensea.io/assets/matic/0x6d241e.../0" target="_blank">View on OpenSea</a>
+    <h1>About WAKKA</h1>
+    <p>
+      WAKKA is a digital NFT project inspired by five rescued cats — Mee, Kuro, Kikki, Miku, and Wakka.  
+      The name "WAKKA" means "circle" in Japanese, symbolizing connection, love, and the cycle of care.  
+      Through this project, we aim to preserve their stories and share their charm with the world.
+    </p>
+  </section>
+
+  <section>
+    <h2>Meet Our Cats</h2>
+    <div class="cat-profile">
+      <img src="img/cats/meereal.png" alt="Mee">
+      <div class="cat-desc">
+        <h3>Mee</h3>
+        <p>A quiet and affectionate girl with rare hachiware markings. She prefers humans and enjoys peaceful naps together.</p>
       </div>
-      <div class="nft-card">
-        <img src="img/cats/WAKKA_007.png" alt="WAKKA #007">
-        <p>WAKKA #007</p>
-        <a href="https://opensea.io/assets/matic/0x6d241e.../16" target="_blank">View on OpenSea</a>
+      <img src="img/cats/meeillust.png" alt="Mee Illust">
+    </div>
+
+    <div class="cat-profile">
+      <img src="img/cats/kuroreal.png" alt="Kuro">
+      <div class="cat-desc">
+        <h3>Kuro</h3>
+        <p>A sleek black cat with sleepy eyes. A lone wolf type—grumpy sometimes, but deeply attached to people.</p>
       </div>
-      <div class="nft-card">
-        <img src="img/cats/WAKKA_012.png" alt="WAKKA #012">
-        <p>WAKKA #012</p>
-        <a href="https://opensea.io/assets/matic/0x6d241e.../21" target="_blank">View on OpenSea</a>
+      <img src="img/cats/kuroillust.png" alt="Kuro Illust">
+    </div>
+
+    <div class="cat-profile">
+      <img src="img/cats/kikkireal.png" alt="Kikki">
+      <div class="cat-desc">
+        <h3>Kikki</h3>
+        <p>Fluffy, friendly, and athletic. Kikki is loved by both cats and humans for his kind and balanced personality.</p>
       </div>
-      <div class="nft-card">
-        <img src="img/cats/comingsoon.png" alt="Coming Soon">
-        <p>WAKKA #XXX</p>
-        <span>Coming soon...</span>
+      <img src="img/cats/kikkiillustv3.png" alt="Kikki Illust">
+    </div>
+
+    <div class="cat-profile">
+      <img src="img/cats/mikureal.png" alt="Miku">
+      <div class="cat-desc">
+        <h3>Miku</h3>
+        <p>Playful and round-eyed, Miku loves to socialize with cats and always brings joy to the room.</p>
       </div>
-      <div class="nft-card">
-        <img src="img/cats/comingsoon.png" alt="Coming Soon">
-        <p>WAKKA #XXX</p>
-        <span>Coming soon...</span>
+      <img src="img/cats/mikuillustv3.png" alt="Miku Illust">
+    </div>
+
+    <div class="cat-profile">
+      <img src="img/cats/wakkareal.png" alt="Wakka">
+      <div class="cat-desc">
+        <h3>Wakka</h3>
+        <p>A large white cat with a human-like presence. Calm yet caring, he even mediates fights between other cats.</p>
       </div>
-      <div class="nft-card">
-        <img src="img/cats/comingsoon.png" alt="Coming Soon">
-        <p>WAKKA #XXX</p>
-        <span>Coming soon...</span>
-      </div>
+      <img src="img/cats/wakkawakkaillustv2.png" alt="Wakka Illust">
     </div>
   </section>
 
-  <div class="counter">
-    Visitors today: <span id="todayCount">-</span><br>
-    Total visitors: <span id="totalCount">-</span>
-  </div>
+  <section>
+    <h2>Wakka Cats</h2>
+    <div class="nft-cards">
+      <div class="nft-card"><img src="img/cats/WAKKA_000.png"><p>WAKKA #000</p></div>
+      <div class="nft-card"><img src="img/cats/WAKKA_007.png"><p>WAKKA #007</p></div>
+      <div class="nft-card"><img src="img/cats/WAKKA_012.png"><p>WAKKA #012</p></div>
+      <div class="nft-card"><img src="img/cats/comingsoon.png"><p>WAKKA #XXX</p></div>
+      <div class="nft-card"><img src="img/cats/comingsoon.png"><p>WAKKA #XXX</p></div>
+      <div class="nft-card"><img src="img/cats/comingsoon.png"><p>WAKKA #XXX</p></div>
+    </div>
+  </section>
 
   <div class="sns">
     <h3 style="text-align:center;">Follow & Share</h3>
     <p style="text-align:center;">
-      <a href="https://x.com/wakkacats" target="_blank">@wakkacats on X</a> | 
-      <a href="https://twitter.com/intent/tweet?text=Check%20out%20the%20WAKKA%20NFT%20Project!%20https://wakkaproject.github.io/" target="_blank">Share this site</a>
+      <a href="https://x.com/wakkacats" target="_blank">@wakkacats</a> | 
+      <a href="https://twitter.com/intent/tweet?text=Check%20out%20WAKKA%20NFTs!%20https://wakkaproject.github.io/" target="_blank">Share this site</a>
     </p>
   </div>
 
@@ -74,23 +117,23 @@
     <h2>FAQ / Roadmap</h2>
 
     <h3>Q: What inspired you to start the WAKKA project?</h3>
-    <p>A: My rescued cats became my family. Each has a unique personality. I wanted to preserve their stories digitally and share their charm with the world.</p>
+    <p>A: My rescued cats became my family. Each one is unique. I wanted to preserve their stories digitally and share their charm with the world.</p>
 
-    <h3>Q: Why did you choose NFTs as the format?</h3>
-    <p>A: NFTs last forever. It's the best way to tell their stories globally.</p>
+    <h3>Q: Why NFTs?</h3>
+    <p>A: Because NFTs last forever, and it's the best way to share their charm globally.</p>
 
     <h3>Q: How do you care for their health?</h3>
-    <p>A: WAKKA and KURO are currently dealing with urinary stones and eating special food. If any cat feels unwell, we go to the vet immediately. NFT earnings support their health and happiness.</p>
+    <p>A: WAKKA and KURO are dealing with urinary stones and on special food. We act fast when any cat is unwell. NFT sales support their wellbeing.</p>
 
-    <h3>Q: What's your vision for the future?</h3>
-    <p>A: I want my cats to make people happy around the world. If WAKKA becomes loved globally, I hope to create a WAKKA meme coin someday.</p>
+    <h3>Q: What's your future goal?</h3>
+    <p>A: I want my cats to make people around the world smile. If WAKKA becomes well-loved, I hope to launch a WAKKA meme coin.</p>
 
-    <h3>Q: Anything you’d like to say to visitors?</h3>
-    <p>A: My cats are full of charm and mischief. Please enjoy watching them shine!</p>
+    <h3>Q: Final message?</h3>
+    <p>A: My cats are sweet and full of personality. Please enjoy watching their adventures!</p>
   </section>
 
   <footer>
-    &copy; 2025 WAKKA PROJECT — Made with love and cat hair.
+    &copy; 2025 WAKKA PROJECT — Created with love and whiskers.
   </footer>
 
   <script>
@@ -99,18 +142,14 @@
     const today = new Date().toLocaleDateString();
 
     let visitData = JSON.parse(localStorage.getItem('visitData') || '{}');
-
     if (visitData.lastVisit !== today) {
       visitData.lastVisit = today;
       visitData.todayCount = 1;
     } else {
       visitData.todayCount = (visitData.todayCount || 0) + 1;
     }
-
     visitData.totalCount = (visitData.totalCount || 0) + 1;
-
     localStorage.setItem('visitData', JSON.stringify(visitData));
-
     document.getElementById('todayCount').textContent = visitData.todayCount;
     document.getElementById('totalCount').textContent = visitData.totalCount;
   </script>
