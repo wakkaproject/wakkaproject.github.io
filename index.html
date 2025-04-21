@@ -1,1 +1,143 @@
-準備完了。HTMLを再構成中…
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WAKKA NFT PROJECT</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; background: #f8f8f8; color: #222; }
+    header img { width: 100%; max-height: 380px; object-fit: cover; display: block; }
+    section { padding: 2rem 1rem; max-width: 1000px; margin: auto; }
+    h1, h2, h3 { text-align: center; }
+    .cat-profile { display: flex; flex-wrap: wrap; gap: 2rem; margin-bottom: 2rem; align-items: center; }
+    .cat-profile img { width: 100%; max-width: 260px; border-radius: 12px; }
+    .cat-desc { flex: 1; min-width: 250px; }
+    .nft-cards { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; }
+    .nft-card { background: #fff; border-radius: 10px; padding: 1rem; text-align: center; width: 280px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .nft-card img { width: 100%; border-radius: 10px; }
+    .sns a { margin: 0 10px; text-decoration: none; color: #1da1f2; }
+    .faq { background: #fff; border-radius: 10px; padding: 2rem; margin-top: 3rem; line-height: 1.6; }
+    .faq h3 { margin-top: 1.5rem; }
+    footer { text-align: center; font-size: 0.9rem; padding: 2rem 1rem; color: #666; }
+    @media(max-width: 768px) {
+      .cat-profile { flex-direction: column; text-align: center; }
+      .cat-desc { min-width: auto; }
+      .nft-card { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top banner -->
+  <header>
+    <img src="img/cats/wakkabanner.png" alt="WAKKA Banner" />
+  </header>
+
+  <!-- About WAKKA -->
+  <section>
+    <h1>About WAKKA</h1>
+    <p style="text-align:center;">
+      WAKKA is a digital NFT project inspired by five rescued cats: Mee, Kuro, Kikki, Miku, and Wakka.<br>
+      “WAKKA” means “circle” in Japanese — representing connection, love, and care.<br>
+      This project preserves their unique stories and shares their charm with the world.
+    </p>
+  </section>
+
+  <!-- Meet the Cats -->
+  <section>
+    <h2>Meet Our Cats</h2>
+
+    <div class="cat-profile">
+      <img src="img/cats/meereal.png" alt="Mee">
+      <div class="cat-desc">
+        <h3>Mee</h3>
+        <p>A calm, sweet girl with rare hachiware markings. She loves humans but prefers to be alone around cats.</p>
+      </div>
+      <img src="img/cats/meeillust.png" alt="Mee Illust">
+    </div>
+
+    <div class="cat-profile">
+      <img src="img/cats/kuroreal.png" alt="Kuro">
+      <div class="cat-desc">
+        <h3>Kuro</h3>
+        <p>A black cat with sleepy eyes. He's a lone wolf, gentle but sometimes grumpy. He's very attached to people.</p>
+      </div>
+      <img src="img/cats/kuroillust.png" alt="Kuro Illust">
+    </div>
+
+    <div class="cat-profile">
+      <img src="img/cats/kikkireal.png" alt="Kikki">
+      <div class="cat-desc">
+        <h3>Kikki</h3>
+        <p>Fluffy and kind, Kikki is loved by everyone. He’s athletic, sweet, and sleeps next to both people and cats.</p>
+      </div>
+      <img src="img/cats/kikkiillustv3.png" alt="Kikki Illust">
+    </div>
+
+    <div class="cat-profile">
+      <img src="img/cats/mikureal.png" alt="Miku">
+      <div class="cat-desc">
+        <h3>Miku</h3>
+        <p>A playful, round-eyed black girl. She loves cats more than humans and always brings energy to the room.</p>
+      </div>
+      <img src="img/cats/mikuillustv3.png" alt="Miku Illust">
+    </div>
+
+    <div class="cat-profile">
+      <img src="img/cats/wakkareal.png" alt="Wakka">
+      <div class="cat-desc">
+        <h3>Wakka</h3>
+        <p>A large white cat with a human-like attitude. Calm, funny, and a peacemaker when fights happen. The heart of the family.</p>
+      </div>
+      <img src="img/cats/wakkawakkaillustv2.png" alt="Wakka Illust">
+    </div>
+  </section>
+
+  <!-- NFT Section -->
+  <section>
+    <h2>Wakka Cats</h2>
+    <div class="nft-cards">
+      <div class="nft-card"><img src="img/cats/WAKKA_000.png"><p>WAKKA #000</p></div>
+      <div class="nft-card"><img src="img/cats/WAKKA_007.png"><p>WAKKA #007</p></div>
+      <div class="nft-card"><img src="img/cats/WAKKA_012.png"><p>WAKKA #012</p></div>
+      <div class="nft-card"><img src="img/cats/comingsoon.png"><p>WAKKA #XXX</p></div>
+      <div class="nft-card"><img src="img/cats/comingsoon.png"><p>WAKKA #XXX</p></div>
+      <div class="nft-card"><img src="img/cats/comingsoon.png"><p>WAKKA #XXX</p></div>
+    </div>
+  </section>
+
+  <!-- SNS Links -->
+  <section class="sns">
+    <h3>Follow & Share</h3>
+    <p style="text-align:center;">
+      <a href="https://x.com/wakkacats" target="_blank">@wakkacats</a> |
+      <a href="https://twitter.com/intent/tweet?text=Check%20out%20WAKKA%20NFT%20Project!%20https://wakkaproject.github.io/" target="_blank">Share this site</a>
+    </p>
+  </section>
+
+  <!-- FAQ & Roadmap -->
+  <section class="faq">
+    <h2>FAQ / Roadmap</h2>
+    <h3>Q: What inspired you to start the WAKKA project?</h3>
+    <p>A: I adopted rescued cats and they became my beloved family. They each have unique personalities and brought joy and meaning to my life. I wanted to preserve their presence digitally and share their charm with the world as a circle of happiness.</p>
+
+    <h3>Q: Why did you choose NFTs?</h3>
+    <p>A: Because NFTs last forever, and it’s the best way to let people around the world meet my cats.</p>
+
+    <h3>Q: How do you care for their health?</h3>
+    <p>A: WAKKA and KURO are currently on treatment for urinary stones. I visit the vet immediately if any cat is unwell. NFT sales are used to support their health and happiness.</p>
+
+    <h3>Q: What's your future goal?</h3>
+    <p>A: I want more people to meet my cats and smile. If WAKKA becomes known globally, I’d love to create a WAKKA meme coin.</p>
+
+    <h3>Q: Any message to visitors?</h3>
+    <p>A: My cats are full of charm and fun. I hope you enjoy following their adventures!</p>
+  </section>
+
+  <footer>
+    &copy; 2025 WAKKA PROJECT — Built with love, pawprints, and dreams.
+  </footer>
+
+</body>
+</html>
