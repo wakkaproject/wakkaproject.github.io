@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>WAKKA ツイートツール</title>
+  <style>
+    body { font-family: sans-serif; background: #f8f8f8; padding: 2rem; }
+    h1 { text-align: center; }
+    textarea { width: 100%; height: 150px; font-size: 1rem; margin-bottom: 1rem; }
+    .buttons { margin-bottom: 1rem; }
+    .buttons button { margin-right: 0.5rem; padding: 0.5rem 1rem; font-size: 0.9rem; }
+    .tweet-button { display: block; margin-top: 1rem; padding: 1rem; background: #1da1f2; color: white; text-align: center; border-radius: 5px; text-decoration: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>WAKKA NFT ツイートツール</h1>
+
+  <textarea id="tweetText">WAKKA #013 has just been listed!
+Check it out here → </textarea>
+
+  <div class="buttons">
+    <button onclick="addText('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/0')">WAKKA #000</button>
+    <button onclick="addText('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/16')">WAKKA #007</button>
+    <button onclick="addText('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/21')">WAKKA #012</button>
+  </div>
+
+  <a href="#" target="_blank" id="tweetLink" class="tweet-button">ツイートする</a>
+
+  <script>
+    const tweetText = document.getElementById('tweetText');
+    const tweetLink = document.getElementById('tweetLink');
+
+    function updateTweetLink() {
+      const text = encodeURIComponent(tweetText.value);
+      tweetLink.href = 'https://twitter.com/intent/tweet?text=' + text;
+    }
+
+    function addText(link) {
+      tweetText.value += "\n" + link;
+      updateTweetLink();
+    }
+
+    tweetText.addEventListener('input', updateTweetLink);
+    window.onload = updateTweetLink;
+  </script>
+</body>
+</html>
