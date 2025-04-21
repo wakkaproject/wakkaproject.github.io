@@ -1,48 +1,80 @@
 
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>WAKKA ツイートツール</title>
+  <title>WAKKA Tweet Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: sans-serif; background: #f8f8f8; padding: 2rem; }
+    body { font-family: sans-serif; padding: 1rem; background: #fafafa; }
     h1 { text-align: center; }
-    textarea { width: 100%; height: 150px; font-size: 1rem; margin-bottom: 1rem; }
-    .buttons { margin-bottom: 1rem; }
-    .buttons button { margin-right: 0.5rem; padding: 0.5rem 1rem; font-size: 0.9rem; }
-    .tweet-button { display: block; margin-top: 1rem; padding: 1rem; background: #1da1f2; color: white; text-align: center; border-radius: 5px; text-decoration: none; font-weight: bold; }
+    textarea { width: 100%; height: 140px; margin: 1rem 0; font-size: 1rem; }
+    button { margin: 0.5rem 0.5rem 0.5rem 0; padding: 0.5rem 1rem; }
+    .tweet { background: #1da1f2; color: white; font-weight: bold; text-decoration: none; border-radius: 5px; padding: 0.8rem 1.5rem; display: inline-block; margin-top: 1rem; }
   </style>
 </head>
 <body>
-  <h1>WAKKA NFT ツイートツール</h1>
+  <h1>WAKKA Tweet Tool</h1>
 
-  <textarea id="tweetText">WAKKA #013 has just been listed!
-Check it out here → </textarea>
+  <textarea id="tweetBox" placeholder="Your tweet will appear here..."></textarea><br>
 
-  <div class="buttons">
-    <button onclick="addText('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/0')">WAKKA #000</button>
-    <button onclick="addText('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/16')">WAKKA #007</button>
-    <button onclick="addText('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/21')">WAKKA #012</button>
-  </div>
+  <button onclick="generateTweet()">Generate Tweet</button>
+  <button onclick="clearTweet()">Clear</button>
+  <button onclick="addGroup2()">Add WAKKA Cats Link</button>
 
-  <a href="#" target="_blank" id="tweetLink" class="tweet-button">ツイートする</a>
+  <br><a id="tweetLink" class="tweet" target="_blank">Tweet</a>
 
   <script>
-    const tweetText = document.getElementById('tweetText');
-    const tweetLink = document.getElementById('tweetLink');
-
-    function updateTweetLink() {
-      const text = encodeURIComponent(tweetText.value);
-      tweetLink.href = 'https://twitter.com/intent/tweet?text=' + text;
+    const group1 = [
+      "WAKKA means 'circle' in Japanese — a symbol of love, connection, and rescue.",
+      "These aren't just NFTs. They're stories of five rescued souls.",
+      "WAKKA was born from fur, purrs, and purpose.",
+      "Every WAKKA NFT is a tribute to the cats that changed our lives.",
+      "Rescue is just the beginning. WAKKA gives it a voice.",
+      "Real cats. Real bonds. Real art.",
+      "When you mint a WAKKA, you’re minting a piece of our heart.",
+      "WAKKA celebrates the quiet beauty of rescued lives.",
+      "Not everyone understands rescued animals. That’s why we created WAKKA.",
+      "WAKKA is a digital home for stories that began in the real world.",
+      "We didn’t rescue them. They rescued us. WAKKA is proof.",
+      "Five cats. One mission: to share their love with the world.",
+      "WAKKA is a thank you to the cats who changed everything.",
+      "There’s more than cuteness in these circles. There’s soul.",
+      "We turned meows into meaning. That’s WAKKA."
+    ];
+    for (let i = 16; i <= 100; i++) {
+      group1.push("WAKKA connects hearts through rescued cat stories. (" + i + ")");
     }
 
-    function addText(link) {
-      tweetText.value += "\n" + link;
-      updateTweetLink();
+    const group2 = [
+      "https://opensea.io/collection/wakka-cats-1"
+    ];
+
+    function generateTweet() {
+      const rand1 = group1[Math.floor(Math.random() * group1.length)];
+      const rand2 = group2[Math.floor(Math.random() * group2.length)];
+      const combined = rand1 + "\n" + rand2;
+      document.getElementById("tweetBox").value = combined;
+      updateLink();
     }
 
-    tweetText.addEventListener('input', updateTweetLink);
-    window.onload = updateTweetLink;
+    function clearTweet() {
+      document.getElementById("tweetBox").value = "";
+      updateLink();
+    }
+
+    function addGroup2() {
+      const current = document.getElementById("tweetBox").value;
+      document.getElementById("tweetBox").value = current + "\n" + group2[0];
+      updateLink();
+    }
+
+    function updateLink() {
+      const text = encodeURIComponent(document.getElementById("tweetBox").value);
+      document.getElementById("tweetLink").href = "https://twitter.com/intent/tweet?text=" + text;
+    }
+
+    window.onload = updateLink;
   </script>
 </body>
 </html>
