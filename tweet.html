@@ -24,6 +24,9 @@
 <textarea id="jpBox" placeholder="ここに日本語を入力..."></textarea>
 
 <h2>② 英語翻訳（ツイート用）＋ボタン追加</h2>
+<p style="margin: 0.5rem 0; font-size: 0.9rem;">②の内容を削除する</p>
+<button onclick="clearENBox()">②をクリア</button>
+
 <textarea id="enBox" placeholder="①を翻訳した英語＋ボタン追加内容が表示されます..."></textarea>
 <div>
   <button onclick="insertPhrase()">魅力フレーズ</button>
@@ -108,6 +111,12 @@ async function translateBack(txt) {
   });
   const data = await res.json();
   document.getElementById("backTransBox").value = data[0].translations[0].text;
+}
+
+function clearENBox() {
+  document.getElementById("enBox").value = "";
+  document.getElementById("tweetLink").href = "#";
+  document.getElementById("backTransBox").value = "";
 }
 </script>
 
