@@ -1,15 +1,16 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>WAKKA Tweet Tool</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: sans-serif; padding: 1rem; background: #f8f8f8; }
-    h1 { text-align: center; font-size: 1.4rem; margin-bottom: 1rem; }
-    h2 { font-size: 1rem; margin: 0.8rem 0 0.4rem; }
-    textarea { width: 100%; height: 100px; margin-bottom: 0.5rem; padding: 0.5rem; font-size: 0.9rem; border-radius: 6px; border: 1px solid #ccc; }
-    button { font-size: 0.75rem; margin: 0.2rem 0.3rem; padding: 0.4rem 0.8rem; border: none; border-radius: 5px; background: #1da1f2; color: white; }
+    body { font-family: sans-serif; background: #f8f8f8; padding: 1rem; }
+    h1 { text-align: center; font-size: 1.4rem; }
+    h2 { font-size: 1rem; margin-top: 1.5rem; }
+    textarea { width: 100%; height: 100px; font-size: 0.9rem; padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 0.5rem; }
+    button { font-size: 0.7rem; margin: 0.2rem 0.2rem; padding: 0.4rem 0.6rem; border: none; border-radius: 5px; background: #1da1f2; color: white; }
     .hashtag-buttons { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.5rem 0; }
     .hashtag-buttons button { background: #444; font-size: 0.65rem; }
     .tweet-button { margin-top: 0.5rem; display: inline-block; background: #1da1f2; color: white; padding: 0.6rem 1.2rem; text-decoration: none; border-radius: 6px; font-size: 0.85rem; }
@@ -22,32 +23,34 @@
 <h2>① 日本語入力</h2>
 <textarea id="jpBox" placeholder="ここに日本語を入力..."></textarea>
 
-<h2>② 翻訳された英語（ボタン追加先・ツイート元）</h2>
-<textarea id="enBox" placeholder="翻訳された英語が表示されます..."></textarea>
-
+<h2>② 英語翻訳（ツイート用）＋ボタン追加</h2>
+<textarea id="enBox" placeholder="①を翻訳した英語＋ボタン追加内容が表示されます..."></textarea>
 <div>
-  <button onclick="insertGroup1()">魅力フレーズ</button>
-  <button onclick="addLink('https://wakkaproject.github.io/')">HPリンク</button>
-  <button onclick="addLink('https://opensea.io/ja/collection/wakka-cats-1')">WAKKAcatsリンク</button>
+  <button onclick="insertPhrase()">魅力フレーズ</button>
+  <button onclick="addToEN('https://wakkaproject.github.io/')">HPリンク</button>
+  <button onclick="addToEN('https://opensea.io/ja/collection/wakka-cats-1')">WAKKAcatsリンク</button>
 </div>
 <div class="hashtag-buttons">
-  <button onclick="addHashtag('#WAKKACats')">#WAKKACats</button>
-  <button onclick="addHashtag('#NFTCats')">#NFTCats</button>
-  <button onclick="addHashtag('#RescueCats')">#RescueCats</button>
-  <button onclick="addHashtag('#AdoptDontShop')">#AdoptDontShop</button>
-  <button onclick="addHashtag('#NFTCommunity')">#NFTCommunity</button>
-  <button onclick="addHashtag('#CatLovers')">#CatLovers</button>
-  <button onclick="addHashtag('#PolygonNFTs')">#PolygonNFTs</button>
-  <button onclick="addHashtag('#Web3')">#Web3</button>
-  <button onclick="addHashtag('#DigitalArt')">#DigitalArt</button>
+  <button onclick="addToEN('#WAKKACats')">#WAKKACats</button>
+  <button onclick="addToEN('#NFTCats')">#NFTCats</button>
+  <button onclick="addToEN('#RescueCats')">#RescueCats</button>
+  <button onclick="addToEN('#AdoptDontShop')">#AdoptDontShop</button>
+  <button onclick="addToEN('#NFTCommunity')">#NFTCommunity</button>
+  <button onclick="addToEN('#CatLovers')">#CatLovers</button>
+  <button onclick="addToEN('#PolygonNFTs')">#PolygonNFTs</button>
+  <button onclick="addToEN('#Web3')">#Web3</button>
+  <button onclick="addToEN('#DigitalArt')">#DigitalArt</button>
 </div>
 <a id="tweetLink" class="tweet-button" href="#" target="_blank">Tweet</a>
 
-<h2>③ 英訳の再翻訳（確認用）</h2>
-<textarea id="backTransBox" placeholder="②を日本語に再翻訳した内容が表示されます..."></textarea>
+<h2>③ 英語の再翻訳（確認用）</h2>
+<textarea id="backTransBox" placeholder="②の内容を再翻訳した結果がここに表示されます..."></textarea>
 
 <script>
-const group1 = [
+const key = "d3CTqWhc7Yc0ygX0ozh7HLDzMFoPWQ5qPH9xSEot0lOlLkZNFMc3JQQJ99BDACxCCsyXJ3w3AAAbACOGr5CZ";
+const region = "japanwest";
+
+const phrases = [
   "WAKKA means 'circle' in Japanese — a symbol of love, connection, and rescue.",
   "These aren't just NFTs. They're stories of five rescued souls.",
   "WAKKA was born from fur, purrs, and purpose.",
@@ -58,35 +61,10 @@ const group1 = [
   "Not everyone understands rescued animals. That’s why we created WAKKA."
 ];
 
-const key = "d3CTqWhc7Yc0ygX0ozh7HLDzMFoPWQ5qPH9xSEot0lOlLkZNFMc3JQQJ99BDACxCCsyXJ3w3AAAbACOGr5CZ";
-const region = "japanwest";
-
-function insertGroup1() {
-  const sentence = group1[Math.floor(Math.random() * group1.length)];
-  document.getElementById("enBox").value += (document.getElementById("enBox").value ? "\n" : "") + sentence;
-  updateTweetLink();
-}
-
-function addLink(link) {
-  document.getElementById("jpBox").value += (document.getElementById("jpBox").value ? "\n" : "") + link;
-  translateAndReflect();
-}
-
-function addHashtag(tag) {
-  document.getElementById("enBox").value += " " + tag;
-  updateTweetLink();
-}
-
-function updateTweetLink() {
-  const text = document.getElementById("enBox").value;
-  document.getElementById("tweetLink").href = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text);
-}
-
-async function translateAndReflect() {
+document.getElementById("jpBox").addEventListener("input", async () => {
   const jpText = document.getElementById("jpBox").value;
   if (!jpText.trim()) return;
-
-  const response = await fetch("https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=en", {
+  const res = await fetch("https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=en", {
     method: "POST",
     headers: {
       "Ocp-Apim-Subscription-Key": key,
@@ -95,28 +73,42 @@ async function translateAndReflect() {
     },
     body: JSON.stringify([{ Text: jpText }])
   });
-
-  const result = await response.json();
-  const translated = result[0].translations[0].text;
+  const data = await res.json();
+  const translated = data[0].translations[0].text;
   document.getElementById("enBox").value = translated;
-  updateTweetLink();
+  updateTweet(translated);
+  translateBack(translated);
+});
 
-  // 再翻訳（英→日）
-  const response2 = await fetch("https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=ja", {
+function addToEN(text) {
+  const enBox = document.getElementById("enBox");
+  enBox.value += (enBox.value ? "\n" : "") + text;
+  updateTweet(enBox.value);
+  translateBack(enBox.value);
+}
+
+function insertPhrase() {
+  const p = phrases[Math.floor(Math.random() * phrases.length)];
+  addToEN(p);
+}
+
+function updateTweet(txt) {
+  document.getElementById("tweetLink").href = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(txt);
+}
+
+async function translateBack(txt) {
+  const res = await fetch("https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=ja", {
     method: "POST",
     headers: {
       "Ocp-Apim-Subscription-Key": key,
       "Ocp-Apim-Subscription-Region": region,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify([{ Text: translated }])
+    body: JSON.stringify([{ Text: txt }])
   });
-  const result2 = await response2.json();
-  const backJP = result2[0].translations[0].text;
-  document.getElementById("backTransBox").value = backJP;
+  const data = await res.json();
+  document.getElementById("backTransBox").value = data[0].translations[0].text;
 }
-
-document.getElementById("jpBox").addEventListener("input", translateAndReflect);
 </script>
 
 </body>
