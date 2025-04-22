@@ -1,90 +1,123 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8" />
   <title>WAKKA Tweet Tool</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body { font-family: sans-serif; background: #f4f4f4; padding: 1rem; max-width: 700px; margin: auto; }
-    h1 { text-align: center; }
-    textarea { width: 100%; padding: 0.75rem; margin-bottom: 1rem; font-size: 1rem; border-radius: 6px; border: 1px solid #ccc; }
-    button { padding: 0.5rem 1rem; margin: 0.5rem 0.5rem 0.5rem 0; border: none; border-radius: 6px; background: #1da1f2; color: #fff; font-weight: bold; cursor: pointer; }
-    button:hover { background: #0d8ddb; }
-    .section { margin-bottom: 2rem; }
-    .tweet-button { display: inline-block; background: #1da1f2; color: #fff; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 6px; margin-top: 1rem; font-weight: bold; }
+    body { font-family: sans-serif; padding: 1rem; background: #f8f8f8; }
+    h1 { text-align: center; font-size: 1.4rem; margin-bottom: 1rem; }
+    h2 { font-size: 1rem; margin: 0.8rem 0 0.4rem; }
+    textarea { width: 100%; height: 100px; margin-bottom: 0.5rem; padding: 0.5rem; font-size: 0.9rem; border-radius: 6px; border: 1px solid #ccc; }
+    button { font-size: 0.75rem; margin: 0.2rem 0.3rem; padding: 0.4rem 0.8rem; border: none; border-radius: 5px; background: #1da1f2; color: white; }
+    .hashtag-buttons { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.5rem 0; }
+    .hashtag-buttons button { background: #444; font-size: 0.65rem; }
+    .tweet-button { margin-top: 0.5rem; display: inline-block; background: #1da1f2; color: white; padding: 0.6rem 1.2rem; text-decoration: none; border-radius: 6px; font-size: 0.85rem; }
   </style>
 </head>
 <body>
 
-  <h1>WAKKA Tweet Tool</h1>
+<h1>WAKKA Tweet Tool</h1>
 
-  <div class="section">
-    <h3>① 日本語入力欄</h3>
-    <textarea id="jpBox" placeholder="ここに日本語を入力..."></textarea>
-  </div>
+<h2>① 日本語入力</h2>
+<textarea id="jpBox" placeholder="ここに日本語を入力..."></textarea>
 
-  <div class="section">
-    <h3>② 英訳されたツイート文（編集OK）</h3>
-    <textarea id="enBox" placeholder="ここに英訳された内容が表示されます..."></textarea>
-    <div>
-      <button onclick="insertGroup1()">Insert from Group1</button>
-      <button onclick="addLink1()">Add Project Link</button>
-      <button onclick="addLink2()">Add OpenSea Link</button>
-    </div>
-  </div>
+<h2>② 翻訳された英語（ボタン追加先・ツイート元）</h2>
+<textarea id="enBox" placeholder="翻訳された英語が表示されます..."></textarea>
 
-  <div class="section">
-    <a id="tweetLink" href="#" target="_blank" class="tweet-button">Tweet This</a>
-  </div>
+<div>
+  <button onclick="insertGroup1()">魅力フレーズ</button>
+  <button onclick="addLink('https://wakkaproject.github.io/')">HPリンク</button>
+  <button onclick="addLink('https://opensea.io/ja/collection/wakka-cats-1')">WAKKAcatsリンク</button>
+</div>
+<div class="hashtag-buttons">
+  <button onclick="addHashtag('#WAKKACats')">#WAKKACats</button>
+  <button onclick="addHashtag('#NFTCats')">#NFTCats</button>
+  <button onclick="addHashtag('#RescueCats')">#RescueCats</button>
+  <button onclick="addHashtag('#AdoptDontShop')">#AdoptDontShop</button>
+  <button onclick="addHashtag('#NFTCommunity')">#NFTCommunity</button>
+  <button onclick="addHashtag('#CatLovers')">#CatLovers</button>
+  <button onclick="addHashtag('#PolygonNFTs')">#PolygonNFTs</button>
+  <button onclick="addHashtag('#Web3')">#Web3</button>
+  <button onclick="addHashtag('#DigitalArt')">#DigitalArt</button>
+</div>
+<a id="tweetLink" class="tweet-button" href="#" target="_blank">Tweet</a>
 
-  <script>
-    const group1 = [
-      "WAKKA means 'circle' in Japanese — a symbol of love, connection, and rescue.",
-      "These aren't just NFTs. They're stories of five rescued souls.",
-      "WAKKA was born from fur, purrs, and purpose.",
-      "Every WAKKA NFT is a tribute to the cats that changed our lives.",
-      "Rescue is just the beginning. WAKKA gives it a voice.",
-      "Real cats. Real bonds. Real art.",
-      "When you mint a WAKKA, you’re minting a piece of our heart.",
-      "WAKKA celebrates the quiet beauty of rescued lives.",
-      "Not everyone understands rescued animals. That’s why we created WAKKA.",
-      "WAKKA is a digital home for stories that began in the real world."
-    ];
+<h2>③ 英訳の再翻訳（確認用）</h2>
+<textarea id="backTransBox" placeholder="②を日本語に再翻訳した内容が表示されます..."></textarea>
 
-    const link1 = "https://wakkaproject.github.io/";
-    const link2 = "https://opensea.io/ja/collection/wakka-cats-1";
+<script>
+const group1 = [
+  "WAKKA means 'circle' in Japanese — a symbol of love, connection, and rescue.",
+  "These aren't just NFTs. They're stories of five rescued souls.",
+  "WAKKA was born from fur, purrs, and purpose.",
+  "Every WAKKA NFT is a tribute to the cats that changed our lives.",
+  "When you mint a WAKKA, you’re minting a piece of our heart.",
+  "Real cats. Real bonds. Real art.",
+  "WAKKA celebrates the quiet beauty of rescued lives.",
+  "Not everyone understands rescued animals. That’s why we created WAKKA."
+];
 
-    document.getElementById("jpBox").addEventListener("input", () => {
-      const jpText = document.getElementById("jpBox").value;
-      document.getElementById("enBox").value = "[DeepL翻訳想定] " + jpText;
-      updateTweetLink();
-    });
+const key = "d3CTqWhc7Yc0ygX0ozh7HLDzMFoPWQ5qPH9xSEot0lOlLkZNFMc3JQQJ99BDACxCCsyXJ3w3AAAbACOGr5CZ";
+const region = "japanwest";
 
-    document.getElementById("enBox").addEventListener("input", updateTweetLink);
+function insertGroup1() {
+  const sentence = group1[Math.floor(Math.random() * group1.length)];
+  document.getElementById("enBox").value += (document.getElementById("enBox").value ? "\n" : "") + sentence;
+  updateTweetLink();
+}
 
-    function insertGroup1() {
-      const random = group1[Math.floor(Math.random() * group1.length)];
-      document.getElementById("enBox").value = random;
-      updateTweetLink();
-    }
+function addLink(link) {
+  document.getElementById("jpBox").value += (document.getElementById("jpBox").value ? "\n" : "") + link;
+  translateAndReflect();
+}
 
-    function addLink1() {
-      document.getElementById("enBox").value += "\n" + link1;
-      updateTweetLink();
-    }
+function addHashtag(tag) {
+  document.getElementById("enBox").value += " " + tag;
+  updateTweetLink();
+}
 
-    function addLink2() {
-      document.getElementById("enBox").value += "\n" + link2;
-      updateTweetLink();
-    }
+function updateTweetLink() {
+  const text = document.getElementById("enBox").value;
+  document.getElementById("tweetLink").href = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text);
+}
 
-    function updateTweetLink() {
-      const text = encodeURIComponent(document.getElementById("enBox").value);
-      document.getElementById("tweetLink").href = "https://twitter.com/intent/tweet?text=" + text;
-    }
+async function translateAndReflect() {
+  const jpText = document.getElementById("jpBox").value;
+  if (!jpText.trim()) return;
 
-    window.onload = updateTweetLink;
-  </script>
+  const response = await fetch("https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=en", {
+    method: "POST",
+    headers: {
+      "Ocp-Apim-Subscription-Key": key,
+      "Ocp-Apim-Subscription-Region": region,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify([{ Text: jpText }])
+  });
+
+  const result = await response.json();
+  const translated = result[0].translations[0].text;
+  document.getElementById("enBox").value = translated;
+  updateTweetLink();
+
+  // 再翻訳（英→日）
+  const response2 = await fetch("https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=ja", {
+    method: "POST",
+    headers: {
+      "Ocp-Apim-Subscription-Key": key,
+      "Ocp-Apim-Subscription-Region": region,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify([{ Text: translated }])
+  });
+  const result2 = await response2.json();
+  const backJP = result2[0].translations[0].text;
+  document.getElementById("backTransBox").value = backJP;
+}
+
+document.getElementById("jpBox").addEventListener("input", translateAndReflect);
+</script>
+
 </body>
 </html>
