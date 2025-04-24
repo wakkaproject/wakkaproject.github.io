@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>WAKKA Tweet Tool</title>
@@ -8,12 +7,12 @@
   <style>
     body { font-family: sans-serif; background: #f8f8f8; padding: 1rem; }
     h1 { text-align: center; font-size: 1.4rem; }
-    h2 { font-size: 1rem; margin-top: 1.5rem; }
-    textarea { width: 100%; height: 100px; font-size: 0.9rem; padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 0.5rem; }
-    button { font-size: 0.7rem; margin: 0.2rem 0.2rem; padding: 0.4rem 0.6rem; border: none; border-radius: 5px; background: #1da1f2; color: white; }
-    .hashtag-buttons { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.5rem 0; }
-    .hashtag-buttons button { background: #444; font-size: 0.65rem; }
-    .tweet-button { margin-top: 0.5rem; display: inline-block; background: #1da1f2; color: white; padding: 0.6rem 1.2rem; text-decoration: none; border-radius: 6px; font-size: 0.85rem; }
+    textarea { width: 100%; height: 100px; font-size: 1rem; margin-bottom: 0.5rem; }
+    button { margin: 0.2rem; padding: 0.4rem 1rem; font-size: 0.9rem; }
+    .hashtag-buttons { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 1rem; }
+    .hashtag-buttons button { background: #444; color: white; border: none; border-radius: 5px; }
+    .center { text-align: center; }
+    .tweet-button { margin-top: 1rem; background: #1da1f2; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-size: 1rem; }
   </style>
 </head>
 <body>
@@ -23,61 +22,83 @@
 <h2>① 日本語入力</h2>
 <textarea id="jpBox" placeholder="ここに日本語を入力..."></textarea>
 
-<h2>② 英語翻訳（ツイート用）＋ボタン追加</h2>
-<p style="margin: 0.5rem 0; font-size: 0.9rem;">②の内容を削除する</p>
-<button onclick="clearENBox()">②をクリア</button>
-
-<textarea id="enBox" placeholder="①を翻訳した英語＋ボタン追加内容が表示されます..."></textarea>
+<h2>② 英訳＋ランダムフレーズ・リンク・ハッシュタグ追加</h2>
+<textarea id="enBox" placeholder="ツイート英訳＋追加内容がここに表示されます..."></textarea>
 <div>
-  <button onclick="insertPhrase()">魅力フレーズ</button>
+  <button onclick="insertPhrase()">ランダムフレーズ</button>
   <button onclick="addToEN('https://wakkaproject.github.io/')">HPリンク</button>
-  <button onclick="addToEN('https://opensea.io/ja/collection/wakka-cats-1')">WAKKAcatsリンク</button>
-<div class="nft-buttons" style="display:flex;flex-wrap:wrap;gap:0.3rem;margin:0.5rem 0;">
-<button onclick="addToEN('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/0')">WAKKA #000</button>
-<button onclick="addToEN('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/1')">WAKKA #001</button>
-<button onclick="addToEN('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/2')">WAKKA #002</button>
-<button onclick="addToEN('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/3')">WAKKA #003</button>
-<button onclick="addToEN('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/4')">WAKKA #004</button>
-<button onclick="addToEN('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/5')">WAKKA #005</button>
-<button onclick="addToEN('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/6')">WAKKA #006</button>
-<button onclick="addToEN('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/7')">WAKKA #007</button>
-<button onclick="addToEN('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/8')">WAKKA #008</button>
-<button onclick="addToEN('https://opensea.io/assets/matic/0x6d241e26760ca7d04ffb8b3558c5c4c1022b52ef/9')">WAKKA #009</button>
-
-  <button onclick="addToEN('#NFTArt')">#NFTArt</button>
-  <button onclick="addToEN('#CryptoArt')">#CryptoArt</button>
-  <button onclick="addToEN('#CatsOfTwitter')">#CatsOfTwitter</button>
+  <button onclick="addToEN('https://opensea.io/ja/collection/wakka-cats-1')">WAKKAコレクション</button>
 </div>
 
 <div class="hashtag-buttons">
+  <button onclick="addToEN('#NFTArt')">#NFTArt</button>
+  <button onclick="addToEN('#CryptoArt')">#CryptoArt</button>
   <button onclick="addToEN('#WAKKACats')">#WAKKACats</button>
   <button onclick="addToEN('#NFTCats')">#NFTCats</button>
   <button onclick="addToEN('#RescueCats')">#RescueCats</button>
-  <button onclick="addToEN('#AdoptDontShop')">#AdoptDontShop</button>
-  <button onclick="addToEN('#NFTCommunity')">#NFTCommunity</button>
-  <button onclick="addToEN('#CatLovers')">#CatLovers</button>
-  <button onclick="addToEN('#PolygonNFTs')">#PolygonNFTs</button>
   <button onclick="addToEN('#Web3')">#Web3</button>
   <button onclick="addToEN('#DigitalArt')">#DigitalArt</button>
 </div>
-<a id="tweetLink" class="tweet-button" href="#" target="_blank">Tweet</a>
 
-<h2>③ 英語の再翻訳（確認用）</h2>
-<textarea id="backTransBox" placeholder="②の内容を再翻訳した結果がここに表示されます..."></textarea>
+<div class="center">
+  <a id="tweetLink" class="tweet-button" href="#" target="_blank">Tweet</a>
+</div>
+
+<h2>③ 英訳の再確認（和訳）</h2>
+<textarea id="backTransBox" placeholder="②の内容の和訳確認がここに表示されます..."></textarea>
 
 <script>
 const key = "d3CTqWhc7Yc0ygX0ozh7HLDzMFoPWQ5qPH9xSEot0lOlLkZNFMc3JQQJ99BDACxCCsyXJ3w3AAAbACOGr5CZ";
 const region = "japanwest";
 
 const phrases = [
-  "WAKKA means 'circle' in Japanese — a symbol of love, connection, and rescue.",
-  "These aren't just NFTs. They're stories of five rescued souls.",
-  "WAKKA was born from fur, purrs, and purpose.",
-  "Every WAKKA NFT is a tribute to the cats that changed our lives.",
-  "When you mint a WAKKA, you’re minting a piece of our heart.",
-  "Real cats. Real bonds. Real art.",
-  "WAKKA celebrates the quiet beauty of rescued lives.",
-  "Not everyone understands rescued animals. That’s why we created WAKKA."
+  "A paw stretched out dramatically... for one piece of kibble.",
+  "Someone knocked a glass off the table. No one confessed.",
+  "They fought over a sunbeam. It moved. They made peace.",
+  "Tail flicking like a metronome. Nobody knows why.",
+  "3 AM zoomies are a team sport around here.",
+  "The curtain moved. It was never the wind.",
+  "She blinked slowly at the cactus. The cactus didn’t blink back.",
+  "KIKKI stole my chair. Now I sit on the floor.",
+  "Someone chewed the plant. It’s a mystery with bite marks.",
+  "KURO tried to fit in a teacup. Confidence was high.",
+  "They all froze mid-grooming. Must be ghost hour.",
+  "MIKU chirped at the ceiling. We couldn’t see what she did.",
+  "WAKKA sits like a loaf. A perfectly symmetrical bread.",
+  "Someone zoomed across the keyboard. Email was sent.",
+  "One paw in the air for no reason. Iconic.",
+  "They all stare at the same corner. We moved out.",
+  "Tried to drink water. Fell in instead.",
+  "Spotted: MEE sleeping in the laundry. Again.",
+  "Head stuck in the tissue box. No regrets.",
+  "All five tried to fit on one small mat. Chaos ensued.",
+  "Discovered a shoelace. Epic boss battle began.",
+  "KIKKI licked the wall. We didn't ask questions.",
+  "Sunbeam nap: level expert.",
+  "Tried to jump. Hit the wall. Continued like nothing happened.",
+  "MEE chirped at the fridge for 10 minutes. She won.",
+  "Someone brought a sock to bed. Thank you?",
+  "Chased her tail. Caught it. Confused.",
+  "That moment when they miss the jump and play it cool.",
+  "Every drawer is a cat trap.",
+  "MIKU sat in the sink again. Just because.",
+  "Discovered reflection. Fought bravely.",
+  "WAKKA headbutted the plant. It was a statement.",
+  "Sleeps all day. Runs laps at midnight.",
+  "Tail was stepped on. Drama for 15 minutes.",
+  "Every cardboard box is sacred.",
+  "Sometimes KURO just yells into the hallway. For reasons.",
+  "A bug entered the room. It's war now.",
+  "She sat on the book I was reading. Story over.",
+  "The tail twitch means 'do not touch.'",
+  "MEE blinked slowly. Negotiation successful.",
+  "One paw on my laptop. Dominance asserted.",
+  "She zoomed into the curtain. Got stuck. Looks proud.",
+  "The whole squad lined up for snacks. Like pros.",
+  "Nothing in the room. Still staring into the void.",
+  "They snored in harmony. It was beautiful.",
+  "WAKKA flopped on the floor dramatically. Oscar-worthy.",
+  "Empty box = royal bed."
 ];
 
 document.getElementById("jpBox").addEventListener("input", async () => {
@@ -100,15 +121,15 @@ document.getElementById("jpBox").addEventListener("input", async () => {
 });
 
 function addToEN(text) {
-  const enBox = document.getElementById("enBox");
-  enBox.value += (enBox.value ? "\n" : "") + text;
-  updateTweet(enBox.value);
-  translateBack(enBox.value);
+  const box = document.getElementById("enBox");
+  box.value += (box.value ? "\n" : "") + text;
+  updateTweet(box.value);
+  translateBack(box.value);
 }
 
 function insertPhrase() {
-  const p = phrases[Math.floor(Math.random() * phrases.length)];
-  addToEN(p);
+  const text = phrases[Math.floor(Math.random() * phrases.length)];
+  addToEN(text);
 }
 
 function updateTweet(txt) {
@@ -127,12 +148,6 @@ async function translateBack(txt) {
   });
   const data = await res.json();
   document.getElementById("backTransBox").value = data[0].translations[0].text;
-}
-
-function clearENBox() {
-  document.getElementById("enBox").value = "";
-  document.getElementById("tweetLink").href = "#";
-  document.getElementById("backTransBox").value = "";
 }
 </script>
 
