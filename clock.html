@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UTCと日本時間（曜日付き）</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 50px;
+      background: #f8f9fa;
+    }
+    h1 {
+      margin-bottom: 40px;
+    }
+    .time-box {
+      font-size: 1.8em;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>現在の時間</h1>
+  <div class="time-box">🌍 UTC：<span id="utc"></span></div>
+  <div class="time-box">🗾 日本時間：<span id="jst"></span></div>
+
+  <script>
+    const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+
+    function pad(n) {
+      return n.toString().padStart(2, '0');
+    }
+
+    function updateTime() {
+      const now = new Date();
+
+      const utcDay = weekdays[now.getUTCDay()];
+      const utcHour = now.getUTCHours();
+      const utcMin = now.getUTCMinutes();
+      const utcSec = now.getUTCSeconds();
+
+      const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+      const jstDay = weekdays[jst.getUTCDay()];
+      const jstHour = jst.getUTCHours();
+      const jstMin = jst.getUTCMinutes();
+      const jstSec = jst.getUTCSeconds();
+
+      document.getElementById('utc').textContent =
+        `${utcDay}曜日 ${pad(utcHour)}:${pad(utcMin)}:${pad(utcSec)}`;
+      document.getElementById('jst').textContent =
+        `${jstDay}曜日 ${pad(jstHour)}:${pad(jstMin)}:${pad(jstSec)}`;
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+  </script>
+</body>
+</html>
