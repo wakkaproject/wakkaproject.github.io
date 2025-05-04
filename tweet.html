@@ -1,155 +1,173 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>WAKKA Tweet Tool</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NFTポストジェネレーター</title>
   <style>
-    body { font-family: sans-serif; background: #f8f8f8; padding: 1rem; }
-    h1 { text-align: center; font-size: 1.4rem; }
-    textarea { width: 100%; height: 100px; font-size: 1rem; margin-bottom: 0.5rem; }
-    button { margin: 0.2rem; padding: 0.4rem 1rem; font-size: 0.9rem; }
-    .hashtag-buttons { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 1rem; }
-    .hashtag-buttons button { background: #444; color: white; border: none; border-radius: 5px; }
-    .center { text-align: center; }
-    .tweet-button { margin-top: 1rem; background: #1da1f2; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-size: 1rem; }
+    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    textarea { width: 100%; margin-top: 10px; }
+    button { margin: 5px 5px 10px 0; }
+    input[type="text"] { width: 100%; margin-bottom: 10px; }
   </style>
 </head>
 <body>
-
-<h1>WAKKA Tweet Tool</h1>
-
-<h2>① 日本語入力</h2>
-<textarea id="jpBox" placeholder="ここに日本語を入力..."></textarea>
-
-<h2>② 英訳＋ランダムフレーズ・リンク・ハッシュタグ追加</h2>
-<textarea id="enBox" placeholder="ツイート英訳＋追加内容がここに表示されます..."></textarea>
-<div>
-  <button onclick="insertPhrase()">ランダムフレーズ</button>
-  <button onclick="addToEN('https://wakkaproject.github.io/')">HPリンク</button>
-  <button onclick="addToEN('https://opensea.io/ja/collection/wakka-cats-1')">WAKKAコレクション</button>
-</div>
-
-<div class="hashtag-buttons">
-  <button onclick="addToEN('#NFTArt')">#NFTArt</button>
-  <button onclick="addToEN('#CryptoArt')">#CryptoArt</button>
-  <button onclick="addToEN('#WAKKACats')">#WAKKACats</button>
-  <button onclick="addToEN('#NFTCats')">#NFTCats</button>
-  <button onclick="addToEN('#RescueCats')">#RescueCats</button>
-  <button onclick="addToEN('#Web3')">#Web3</button>
-  <button onclick="addToEN('#DigitalArt')">#DigitalArt</button>
-</div>
-
-<div class="center">
-  <a id="tweetLink" class="tweet-button" href="#" target="_blank">Tweet</a>
-</div>
-
-<h2>③ 英訳の再確認（和訳）</h2>
-<textarea id="backTransBox" placeholder="②の内容の和訳確認がここに表示されます..."></textarea>
+  <h2>NFTポストジェネレーター</h2>
+  <label>作品URL：</label><br/>
+  <input type="text" id="urlInput" placeholder="OpenSeaなどのURLを入力" /><br/>
+  <label><input type="checkbox" id="catTag" /> 猫タグを追加する</label><br/>
+  <button onclick="generatePost('gm')">GM</button>
+  <button onclick="generatePost('cat')">🐱ねこ🐱</button>
+  <button onclick="generatePost('art')">ART</button><br/>
+  <textarea id="output" rows="4" placeholder="英語投稿がここに表示されます"></textarea><br/>
+  <button onclick="copyText()">コピー</button>
+  <button onclick="tweetText()">ツイート</button>
+  <textarea id="translated" rows="3" placeholder="翻訳結果がここに表示されます"></textarea>
 
 <script>
-const key = "d3CTqWhc7Yc0ygX0ozh7HLDzMFoPWQ5qPH9xSEot0lOlLkZNFMc3JQQJ99BDACxCCsyXJ3w3AAAbACOGr5CZ";
-const region = "japanwest";
+  const gmMessages = [
+    "Good morning! Wishing you a calm and productive day.",
+    "Start the day with a smile and gentle thoughts.",
+    "Good morning to all creators and dreamers!",
+    "Hope today brings you inspiration and peace.",
+    "Fresh morning, fresh mindset.",
+    "Take it slow this morning. You’re doing great.",
+    "Rise and breathe. One step at a time.",
+    "Let the sunlight guide your morning thoughts.",
+    "Small moments matter today. Good morning.",
+    "Stay warm and grounded this morning.",
+    "A soft beginning is a strong choice.",
+    "Wishing you gentle progress today.",
+    "Hello to a brand new day!",
+    "Your pace is perfect. Good morning.",
+    "Quiet mornings lead to creative days.",
+    "Take care of your thoughts this morning.",
+    "Breathe. You’re here, and that’s enough.",
+    "No pressure. Just presence. GM.",
+    "New light, new hope. Good morning.",
+    "Let gratitude shape your morning.",
+    "A simple ‘good morning’ can change the day.",
+    "Have a meaningful morning, no matter the pace.",
+    "You are welcomed by the day. GM!",
+    "Trust in small beginnings.",
+    "Even grey skies bring soft light. GM.",
+    "Stretch, smile, and rise. That’s enough.",
+    "The sun showed up. So did you.",
+    "Soft mornings win the long game.",
+    "Let’s greet this day kindly.",
+    "A peaceful start creates a peaceful mind."
+  ];
 
-const phrases = [
-  "A paw stretched out dramatically... for one piece of kibble.",
-  "Someone knocked a glass off the table. No one confessed.",
-  "They fought over a sunbeam. It moved. They made peace.",
-  "Tail flicking like a metronome. Nobody knows why.",
-  "3 AM zoomies are a team sport around here.",
-  "The curtain moved. It was never the wind.",
-  "She blinked slowly at the cactus. The cactus didn’t blink back.",
-  "KIKKI stole my chair. Now I sit on the floor.",
-  "Someone chewed the plant. It’s a mystery with bite marks.",
-  "KURO tried to fit in a teacup. Confidence was high.",
-  "They all froze mid-grooming. Must be ghost hour.",
-  "MIKU chirped at the ceiling. We couldn’t see what she did.",
-  "WAKKA sits like a loaf. A perfectly symmetrical bread.",
-  "Someone zoomed across the keyboard. Email was sent.",
-  "One paw in the air for no reason. Iconic.",
-  "They all stare at the same corner. We moved out.",
-  "Tried to drink water. Fell in instead.",
-  "Spotted: MEE sleeping in the laundry. Again.",
-  "Head stuck in the tissue box. No regrets.",
-  "All five tried to fit on one small mat. Chaos ensued.",
-  "Discovered a shoelace. Epic boss battle began.",
-  "KIKKI licked the wall. We didn't ask questions.",
-  "Sunbeam nap: level expert.",
-  "Tried to jump. Hit the wall. Continued like nothing happened.",
-  "MEE chirped at the fridge for 10 minutes. She won.",
-  "Someone brought a sock to bed. Thank you?",
-  "Chased her tail. Caught it. Confused.",
-  "That moment when they miss the jump and play it cool.",
-  "Every drawer is a cat trap.",
-  "MIKU sat in the sink again. Just because.",
-  "Discovered reflection. Fought bravely.",
-  "WAKKA headbutted the plant. It was a statement.",
-  "Sleeps all day. Runs laps at midnight.",
-  "Tail was stepped on. Drama for 15 minutes.",
-  "Every cardboard box is sacred.",
-  "Sometimes KURO just yells into the hallway. For reasons.",
-  "A bug entered the room. It's war now.",
-  "She sat on the book I was reading. Story over.",
-  "The tail twitch means 'do not touch.'",
-  "MEE blinked slowly. Negotiation successful.",
-  "One paw on my laptop. Dominance asserted.",
-  "She zoomed into the curtain. Got stuck. Looks proud.",
-  "The whole squad lined up for snacks. Like pros.",
-  "Nothing in the room. Still staring into the void.",
-  "They snored in harmony. It was beautiful.",
-  "WAKKA flopped on the floor dramatically. Oscar-worthy.",
-  "Empty box = royal bed."
-];
+  const catMessages = [
+    "Good morning from the NFT cativerse 🐾",
+    "Woke up with my rescue cat and good vibes.",
+    "Another day, another meow on the blockchain.",
+    "My cat approves of this morning mint 🐱",
+    "Sunshine, coffee, and cats in my wallet ☀️☕🐾",
+    "Rescue cats deserve the blockchain too.",
+    "Minting purrfection this morning.",
+    "Cat vibes only this fine morning 🐈",
+    "Holding rare cats and calm thoughts.",
+    "Gm from my digital feline family.",
+    "Starting the day with whiskers and WAG... wait, just whiskers 🐾",
+    "Minted another pixel kitty. Meow!",
+    "NFT + cat = happiness 🐱💎",
+    "A soft purr for this bright day.",
+    "Every NFT collection needs a cat.",
+    "Digital fur, real love.",
+    "Cat NFTs = ultimate morning motivation.",
+    "Blockchain furball says gm 🐾",
+    "Woke up to new mints and a meow.",
+    "Even cats are bullish today.",
+    "Nothing beats a rescue cat drop.",
+    "Gm, from my couch and my cat.",
+    "The cat sat on my keyboard, minted itself.",
+    "NFTs + nap = cat-approved productivity.",
+    "One paw at a time on the blockchain 🐾",
+    "Feline vibes in the metaverse.",
+    "Started the day with purring and pixels.",
+    "The blockchain is better with whiskers.",
+    "Every collection needs a rescue.",
+    "Cat morning, clean mint, good vibes."
+  ];
 
-document.getElementById("jpBox").addEventListener("input", async () => {
-  const jpText = document.getElementById("jpBox").value;
-  if (!jpText.trim()) return;
-  const res = await fetch("https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=en", {
-    method: "POST",
-    headers: {
-      "Ocp-Apim-Subscription-Key": key,
-      "Ocp-Apim-Subscription-Region": region,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify([{ Text: jpText }])
-  });
-  const data = await res.json();
-  const translated = data[0].translations[0].text;
-  document.getElementById("enBox").value = translated;
-  updateTweet(translated);
-  translateBack(translated);
-});
+  const artMessages = [
+    "New day, new art. Let's mint something beautiful.",
+    "Creating quietly this morning.",
+    "Art never sleeps. But I try to.",
+    "Each morning is a blank canvas.",
+    "Mint with purpose, create with peace.",
+    "Woke up with a new concept. Let’s go.",
+    "NFT art is emotion on the blockchain.",
+    "Brushes, pixels, coffee. Let's build.",
+    "Another chance to create something rare.",
+    "Create from the heart, mint with love.",
+    "Gm artists. Let’s make the space beautiful.",
+    "Sketching out ideas with morning light.",
+    "Art brings peace. Mint brings motion.",
+    "Today’s drop starts with intention.",
+    "Let your lines speak for you.",
+    "Another brushstroke in the chain.",
+    "Good art takes time, and coffee.",
+    "Build slowly. Mint boldly.",
+    "Feeling inspired by color this morning.",
+    "Texture and thought lead the way.",
+    "Each pixel is a story.",
+    "One render at a time.",
+    "The chain remembers beautiful things.",
+    "Gm to artists minting peace, not hype.",
+    "Digital canvas, emotional truth.",
+    "No rush. Let art arrive.",
+    "Gm. Let’s fill today with honest creation.",
+    "Sketch it. Feel it. Mint it.",
+    "One day, one artwork, one truth.",
+    "Create to express, not impress."
+  ];
 
-function addToEN(text) {
-  const box = document.getElementById("enBox");
-  box.value += (box.value ? "\n" : "") + text;
-  updateTweet(box.value);
-  translateBack(box.value);
-}
+  const key = "d3CTqWhc7Yc0ygX0ozh7HLDzMFoPWQ5qPH9xSEot0lOlLkZNFMc3JQQJ99BDACxCCsyXJ3w3AAAbACOGr5CZ";
+  const region = "japanwest";
 
-function insertPhrase() {
-  const text = phrases[Math.floor(Math.random() * phrases.length)];
-  addToEN(text);
-}
+  function generatePost(type) {
+    const url = document.getElementById("urlInput").value.trim();
+    const cat = document.getElementById("catTag").checked;
+    const tags = "#NFT #NFTArt #PFP" + ((type === "cat" || cat) ? " #CatNFT #NFTCats #RescueCat" : "");
 
-function updateTweet(txt) {
-  document.getElementById("tweetLink").href = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(txt);
-}
+    let list = type === 'cat' ? catMessages : type === 'art' ? artMessages : gmMessages;
+    const msg = list[Math.floor(Math.random() * list.length)];
+    const full = [msg, url, tags].filter(Boolean).join("\n");
+    document.getElementById("output").value = full;
+    translate(full);
+  }
 
-async function translateBack(txt) {
-  const res = await fetch("https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=ja", {
-    method: "POST",
-    headers: {
-      "Ocp-Apim-Subscription-Key": key,
-      "Ocp-Apim-Subscription-Region": region,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify([{ Text: txt }])
-  });
-  const data = await res.json();
-  document.getElementById("backTransBox").value = data[0].translations[0].text;
-}
+  function copyText() {
+    const text = document.getElementById("output").value;
+    navigator.clipboard.writeText(text);
+  }
+
+  function tweetText() {
+    const text = document.getElementById("output").value;
+    const encoded = encodeURIComponent(text);
+    window.open(`https://twitter.com/intent/tweet?text=${encoded}`, '_blank');
+  }
+
+  async function translate(text) {
+    try {
+      const res = await fetch("https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=ja", {
+        method: "POST",
+        headers: {
+          "Ocp-Apim-Subscription-Key": key,
+          "Ocp-Apim-Subscription-Region": region,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify([{ Text: text }])
+      });
+      const data = await res.json();
+      document.getElementById("translated").value = data[0].translations[0].text || "翻訳失敗";
+    } catch {
+      document.getElementById("translated").value = "翻訳失敗";
+    }
+  }
 </script>
-
 </body>
 </html>
