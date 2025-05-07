@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Nipnoise Girl Generator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f6f6f9;
+      padding: 2rem;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    #output {
+      margin-top: 2rem;
+      white-space: pre-wrap;
+      background: #fff;
+      padding: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Nipnoise Girl Generator</h1>
+  <button onclick="generate()">構成をランダム生成</button>
+  <button onclick="copyToClipboard()">プロンプトをコピー</button>
+  <div id="output"></div>
+
+  <script src="full_parts.js"></script>
+  <script>
+    function generate() {
+      let result = "次のプロンプトでイラストを描いて\n\na melancholic Japanese girl in a soft watercolor and pencil sketch style,\n\n";
+      for (let key in parts) {
+        const list = parts[key];
+        const choice = list[Math.floor(Math.random() * list.length)];
+        result += `${key}: ${choice}\n`;
+      }
+      document.getElementById("output").textContent = result;
+    }
+
+    function copyToClipboard() {
+      const text = document.getElementById("output").textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("プロンプトをコピーしました！");
+      });
+    }
+  </script>
+</body>
+</html>
