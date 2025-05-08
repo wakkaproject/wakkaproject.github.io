@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>業務効率化フォーム</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>業務効率化フォーム</h1>
+        <div class="form-group">
+            <label>コマーシャル or コンシューマー確認</label>
+            <input type="checkbox" id="commercial" name="confirmation" value="Commercial"> コマーシャル
+            <input type="checkbox" id="consumer" name="confirmation" value="Consumer"> コンシューマー
+        </div>
+        <div class="form-group">
+            <label for="tag">■TAG#</label>
+            <input type="text" id="tag">
+        </div>
+        <div class="form-group">
+            <label for="case">■CASE#</label>
+            <input type="text" id="case">
+        </div>
+        <div class="form-group">
+            <label for="model">■機種:</label>
+            <input type="text" id="model">
+        </div>
+        <div class="form-group">
+            <label for="question">■聞きたい事:</label>
+            <textarea id="question"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="reason">■理由/背景:</label>
+            <textarea id="reason"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="os">■OS情報:</label>
+            <input type="text" id="os">
+        </div>
+        <div class="form-group">
+            <label for="phenomenon">■現象:</label>
+            <textarea id="phenomenon"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="since">■いつから:</label>
+            <input type="text" id="since">
+        </div>
+        <div class="form-group">
+            <label for="frequency">■頻度:</label>
+            <input type="text" id="frequency">
+        </div>
+        <div class="form-group">
+            <label for="other">■その他情報:</label>
+            <textarea id="other"></textarea>
+        </div>
+        <button id="copyButton" disabled>REC Chat用文章のコピー</button>
+    </div>
+
+    <script>
+        const commercialCheckbox = document.getElementById('commercial');
+        const consumerCheckbox = document.getElementById('consumer');
+        const copyButton = document.getElementById('copyButton');
+
+        commercialCheckbox.addEventListener('change', toggleCheckbox);
+        consumerCheckbox.addEventListener('change', toggleCheckbox);
+
+        function toggleCheckbox() {
+            if (commercialCheckbox.checked || consumerCheckbox.checked) {
+                copyButton.disabled = false;
+            } else {
+                copyButton.disabled = true;
+            }
+        }
+
+        copyButton.addEventListener('click', () => {
+            const tag = document.getElementById('tag').value;
+            const caseNumber = document.getElementById('case').value;
+            const model = document.getElementById('model').value;
+            const question = document.getElementById('question').value;
+            const reason = document.getElementById('reason').value;
+            const os = document.getElementById('os').value;
+            const phenomenon = document.getElementById('phenomenon').value;
+            const since = document.getElementById('since').value;
+            const frequency = document.getElementById('frequency').value;
+            const other = document.getElementById('other').value;
+
+            const textToCopy = `■TAG#${tag}
+■CASE#${caseNumber}
+■機種: ${model}
+■聞きたい事: ${question}
+■理由/背景: ${reason}
+■OS情報: ${os}
+■現象: ${phenomenon}
+■いつから: ${since}
+■頻度: ${frequency}
+■その他情報: ${other}`;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('コピーしました!');
+            }).catch(err => {
+                console.error('コピーに失敗しました: ', err);
+            });
+        });
+    </script>
+</body>
+</html>

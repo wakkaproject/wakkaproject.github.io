@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REC部門エスカレーションチェックリスト</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .input-group input[type="text"] {
+            flex: 1;
+            padding: 5px;
+            margin-right: 10px;
+            width: 150px;
+        }
+        .input-group button {
+            padding: 5px 10px;
+        }
+        .copied-message {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px;
+            border-radius: 3px;
+            display: none;
+        }
+        .required-message {
+            color: red;
+            display: none;
+        }
+    </style>
+    <script>
+        function copyToClipboard(id, messageId, requiredId) {
+            var copyText = document.getElementById(id);
+            var requiredField = document.getElementById(requiredId);
+            var requiredMessage = document.getElementById('requiredMessage');
+
+            if (requiredField.value.trim() === "") {
+                requiredMessage.style.display = "block";
+                return;
+            } else {
+                requiredMessage.style.display = "none";
+            }
+
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+            document.execCommand("copy");
+
+            var message = document.getElementById(messageId);
+            message.style.display = "block";
+            setTimeout(function() {
+                message.style.display = "none";
+            }, 1000);
+
+            alert("保守を確認してください");
+        }
+
+        function validateRequiredField(id, messageId) {
+            var field = document.getElementById(id);
+            var message = document.getElementById(messageId);
+
+            if (field.value.trim() === "") {
+                message.style.display = "block";
+            } else {
+                message.style.display = "none";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>REC部門エスカレーションチェックリスト</h1>
+    <div class="input-group">
+        <label for="commercialConsumer">コマーシャル or コンシューマー確認</label>
+        <input type="checkbox" id="commercialConsumer">
+        <input type="text" id="requiredField" placeholder="確認用BOX" oninput="validateRequiredField('requiredField', 'requiredMessage')">
+        <span id="requiredMessage" class="required-message">必須確認事項です</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="qrtChatId" placeholder="QRT Chat ID">
+        <button onclick="copyToClipboard('qrtChatId', 'message1', 'requiredField')">コピー</button>
+        <span id="message1" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="companyName" placeholder="会社名">
+        <button onclick="copyToClipboard('companyName', 'message2', 'requiredField')">コピー</button>
+        <span id="message2" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="affectedUnits" placeholder="Affected Units / Install Base">
+        <button onclick="copyToClipboard('affectedUnits', 'message3', 'requiredField')">コピー</button>
+        <span id="message3" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="modelName" placeholder="機種名">
+        <button onclick="copyToClipboard('modelName', 'message4', 'requiredField')">コピー</button>
+        <span id="message4" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="chassis" placeholder="シャーシ">
+        <button onclick="copyToClipboard('chassis', 'message5', 'requiredField')">コピー</button>
+        <span id="message5" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="os" placeholder="OS">
+        <button onclick="copyToClipboard('os', 'message6', 'requiredField')">コピー</button>
+        <span id="message6" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="osDetails" placeholder="OSの詳細">
+        <button onclick="copyToClipboard('osDetails', 'message7', 'requiredField')">コピー</button>
+        <span id="message7" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="sinceWhen" placeholder="いつから">
+        <button onclick="copyToClipboard('sinceWhen', 'message8', 'requiredField')">コピー</button>
+        <span id="message8" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="trigger" placeholder="きっかけ">
+        <button onclick="copyToClipboard('trigger', 'message9', 'requiredField')">コピー</button>
+        <span id="message9" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="frequency" placeholder="発生頻度">
+        <button onclick="copyToClipboard('frequency', 'message10', 'requiredField')">コピー</button>
+        <span id="message10" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="expansion" placeholder="増設の有無">
+        <button onclick="copyToClipboard('expansion', 'message11', 'requiredField')">コピー</button>
+        <span id="message11" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="parts" placeholder="パーツ">
+        <button onclick="copyToClipboard('parts', 'message12', 'requiredField')">コピー</button>
+        <span id="message12" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="biosVersion" placeholder="BIOSバージョン">
+        <button onclick="copyToClipboard('biosVersion', 'message13', 'requiredField')">コピー</button>
+        <span id="message13" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="driverVersion" placeholder="ドライババージョン">
+        <button onclick="copyToClipboard('driverVersion', 'message14', 'requiredField')">コピー</button>
+        <span id="message14" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="fwVersion" placeholder="FWバージョン">
+        <button onclick="copyToClipboard('fwVersion', 'message15', 'requiredField')">コピー</button>
+        <span id="message15" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="desiredResponse" placeholder="欲しい回答内容">
+        <button onclick="copyToClipboard('desiredResponse', 'message16', 'requiredField')">コピー</button>
+        <span id="message16" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="issueDetails" placeholder="障害内容詳細">
+        <button onclick="copyToClipboard('issueDetails', 'message17', 'requiredField')">コピー</button>
+        <span id="message17" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="phenomenon" placeholder="現象">
+        <button onclick="copyToClipboard('phenomenon', 'message18', 'requiredField')">コピー</button>
+        <span id="message18" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="reproductionMethod" placeholder="再現方法">
+        <button onclick="copyToClipboard('reproductionMethod', 'message19', 'requiredField')">コピー</button>
+        <span id="message19" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="isolationSteps" placeholder="実施した切り分け">
+        <button onclick="copyToClipboard('isolationSteps', 'message20', 'requiredField')">コピー</button>
+        <span id="message20" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="checkedDocs" placeholder="チェックした資料、ドキュメント、WEBサイト">
+        <button onclick="copyToClipboard('checkedDocs', 'message21', 'requiredField')">コピー</button>
+        <span id="message21" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="background" placeholder="経緯/背景">
+        <button onclick="copyToClipboard('background', 'message22', 'requiredField')">コピー</button>
+        <span id="message22" class="copied-message">Copied</span>
+    </div>
+    <div class="input-group">
+        <input type="text" id="otherNotes" placeholder="その他備考">
+        <button onclick="copyToClipboard('otherNotes', 'message23', 'requiredField')">コピー</button>
+        <span id="message23" class="copied-message">Copied</span>
+    </div>
+</body>
+</html>

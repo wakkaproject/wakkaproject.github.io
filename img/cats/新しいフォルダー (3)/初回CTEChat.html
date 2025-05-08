@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>自動入力フォーム</title>
+    <style>
+        body {
+            font-family: Meiryo;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            font-family: Meiryo;
+            font-size: 13px;
+        }
+        textarea {
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>自動入力フォーム</h1>
+    <div class="form-group">
+        <label for="inputText">入力テキスト</label>
+        <textarea id="inputText" rows="5" oninput="autoFill()"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="callStatus">通話中/保留中/終話済</label>
+        <input type="text" id="callStatus">
+    </div>
+    <div class="form-group">
+        <label for="tag">TAG#</label>
+        <input type="text" id="tag">
+    </div>
+    <div class="form-group">
+        <label for="model">機種名</label>
+        <input type="text" id="model">
+    </div>
+    <div class="form-group">
+        <label for="dtc">DTC使用有無</label>
+        <input type="text" id="dtc">
+    </div>
+    <div class="form-group">
+        <label for="transcript">継続Transcript#</label>
+        <input type="text" id="transcript">
+    </div>
+    <div class="form-group">
+        <label for="question">聞きたいこと</label>
+        <input type="text" id="question">
+    </div>
+    <div class="form-group">
+        <label for="limit">回答リミット時間</label>
+        <input type="text" id="limit">
+    </div>
+    <div class="form-group">
+        <label for="phenomenon">現象</label>
+        <input type="text" id="phenomenon">
+    </div>
+    <div class="form-group">
+        <label for="isolation">実施した切り分け</label>
+        <input type="text" id="isolation">
+    </div>
+    <div class="form-group">
+        <label for="additionalInfo">その他情報</label>
+        <textarea id="additionalInfo" rows="5"></textarea>
+    </div>
+
+    <script>
+        function autoFill() {
+            const inputText = document.getElementById('inputText').value;
+            const lines = inputText.split('\n');
+            const data = {};
+
+            lines.forEach(line => {
+                const [key, value] = line.split(/[:#]/);
+                if (key && value) {
+                    data[key.trim()] = value.trim();
+                }
+            });
+
+            document.getElementById('callStatus').value = data['■通話中/保留中/終話済'] || '';
+            document.getElementById('tag').value = data['■Tag'] || '';
+            document.getElementById('model').value = data['■機種名'] || '';
+            document.getElementById('dtc').value = data['■DTC使用有無'] || '';
+            document.getElementById('transcript').value = data['■継続Transcript'] || '';
+            document.getElementById('question').value = data['■聞きたいこと'] || '';
+            document.getElementById('limit').value = data['■回答リミット時間'] || '';
+            document.getElementById('phenomenon').value = data['■現象'] || '';
+            document.getElementById('isolation').value = data['■実施した切り分け'] || '';
+
+            const additionalInfo = document.getElementById('additionalInfo');
+            additionalInfo.value = '';
+            Object.keys(data).forEach(key => {
+                if (!['■通話中/保留中/終話済', '■Tag', '■機種名', '■DTC使用有無', '■継続Transcript', '■聞きたいこと', '■回答リミット時間', '■現象', '■実施した切り分け'].includes(key)) {
+                    additionalInfo.value += key + ': ' + data[key] + '\n';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
