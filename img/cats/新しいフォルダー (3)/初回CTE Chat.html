@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>自動入力フォーム</title>
+    <style>
+        body {
+            font-family: Meiryo;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            font-family: Meiryo;
+            font-size: 13px;
+            overflow-y: hidden;
+            resize: none;
+        }
+        textarea {
+            min-height: 40px;
+        }
+    </style>
+</head>
+<body>
+    <h1>自動入力フォーム</h1>
+    <div class="form-group">
+        <label for="inputText">入力テキスト</label>
+        <textarea id="inputText" rows="8" oninput="autoFill(); autoResize(this);"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="tag">TAG#</label>
+        <textarea id="tag" oninput="autoResize(this)"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="model">機種名</label>
+        <textarea id="model" oninput="autoResize(this)"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="dtc">DTC使用有無</label>
+        <textarea id="dtc" oninput="autoResize(this)"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="transcript">継続Transcript#</label>
+        <textarea id="transcript" oninput="autoResize(this)"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="question">聞きたいこと</label>
+        <textarea id="question" oninput="autoResize(this)"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="limit">回答リミット時間</label>
+        <textarea id="limit" oninput="autoResize(this)"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="phenomenon">現象</label>
+        <textarea id="phenomenon" oninput="autoResize(this)"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="isolation">実施した切り分け</label>
+        <textarea id="isolation" oninput="autoResize(this)"></textarea>
+    </div>
+
+    <script>
+        function autoResize(el) {
+            el.style.height = "auto";
+            el.style.height = (el.scrollHeight) + "px";
+        }
+
+        function autoFill() {
+            const inputText = document.getElementById('inputText').value;
+            const lines = inputText.split('\n');
+            const data = {};
+            let isolationIndex = -1;
+
+            // 最初に「実施した切り分け」が登場する位置を特定
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].startsWith("実施した切り分け：")) {
+                    isolationIndex = i;
+                    break;
+                }
+            }
+
+            // 「実施した切り分け」より前は通常解析
+            for (let i = 0; i < lines.length; i++) {
+                if (i === isolationIndex) {
+                    data["実施した切り分け"] = lines.slice(i).join('\n').replace("実施した切り分け：", "").trim();
+                    break;
+                }
+                const match = lines[i].match(/^(.+?)(?:：|#)\s*(.+)$/);
+                if (match) {
+                    const key = match[1].trim();
+                    const value = match[2].trim();
+                    data[key] = value;
+                }
+            }
+
+            const keys = {
+                'tag': 'TAG',
+                'model': '機種名',
+                'dtc': 'DTC使用有無',
+                'transcript': '継続Transcript',
+                'question': '聞きたいこと',
+                'limit': '回答リミット時間',
+                'phenomenon': '現象',
+                'isolation': '実施した切り分け',
+                'case': 'CASE',
+                'since': 'いつから',
+                'os': 'OS情報',
+                'frequency': '頻度'
+            };
+
+            for (let id in keys) {
+                const el = document.getElementById(id);
+                el.value = data[keys[id]] || '';
+                autoResize(el);
+            }
+        }
+    </script>
+
+    <div class="form-group">
+        <label for="case">CASE#</label>
+        <textarea id="case" oninput="autoResize(this)"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="since">いつから</label>
+        <textarea id="since" oninput="autoResize(this)"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="os">OS情報</label>
+        <textarea id="os" oninput="autoResize(this)"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="frequency">頻度</label>
+        <textarea id="frequency" oninput="autoResize(this)"></textarea>
+    </div>
+</body>
+
+</html>

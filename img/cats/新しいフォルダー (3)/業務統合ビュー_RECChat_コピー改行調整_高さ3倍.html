@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<title>業務統合ビュー</title>
+<style>
+    body { font-family: Meiryo, sans-serif; margin: 20px; }
+    .tabs { display: flex; margin-bottom: 10px; }
+    .tabs button {
+      padding: 10px 20px;
+      border: none;
+      background: #ccc;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+    .tabs button.active { background: #007BFF; color: white; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    textarea { width: 100%; padding: 5px; box-sizing: border-box; resize: none; }
+  </style>
+</head>
+<body>
+<h1>業務統合ビュー</h1>
+<div class="tabs">
+<button class="tab-btn active" data-tab="cte">初回CTE</button>
+<button class="tab-btn" data-tab="rec">REC Chat</button>
+</div>
+<div class="tab-content active" id="cte"><div class="form-group">
+<label for="inputText">入力テキスト</label>
+<textarea id="inputText" oninput="autoFill(); autoResize(this);" rows="8"></textarea>
+</div><div class="form-group">
+<label for="tag">TAG#</label>
+<textarea id="rec_tag" oninput="autoResize(this)" style="min-height: 48px"></textarea>
+</div><div class="form-group">
+<label for="model">機種名</label>
+<textarea id="rec_model" oninput="autoResize(this)" style="min-height: 48px"></textarea>
+</div><div class="form-group">
+<label for="dtc">DTC使用有無</label>
+<textarea id="dtc" oninput="autoResize(this)"></textarea>
+</div><div class="form-group">
+<label for="transcript">継続Transcript#</label>
+<textarea id="transcript" oninput="autoResize(this)"></textarea>
+</div><div class="form-group">
+<label for="question">聞きたいこと</label>
+<textarea id="rec_question" oninput="autoResize(this)" style="min-height: 144px"></textarea>
+</div><div class="form-group">
+<label for="limit">回答リミット時間</label>
+<textarea id="limit" oninput="autoResize(this)"></textarea>
+</div><div class="form-group">
+<label for="phenomenon">現象</label>
+<textarea id="rec_phenomenon" oninput="autoResize(this)"></textarea>
+</div><div class="form-group">
+<label for="isolation">実施した切り分け</label>
+<textarea id="isolation" oninput="autoResize(this)"></textarea>
+</div><div class="form-group">
+<label for="case">CASE#</label>
+<textarea id="rec_case" oninput="autoResize(this)" style="min-height: 48px"></textarea>
+</div><div class="form-group">
+<label for="since">いつから</label>
+<textarea id="rec_since" oninput="autoResize(this)" style="min-height: 48px"></textarea>
+</div><div class="form-group">
+<label for="os">OS情報</label>
+<textarea id="rec_os" oninput="autoResize(this)" style="min-height: 48px"></textarea>
+</div><div class="form-group">
+<label for="frequency">頻度</label>
+<textarea id="rec_frequency" oninput="autoResize(this)" style="min-height: 48px"></textarea>
+</div></div>
+<div class="tab-content" id="rec"><div class="form-group">
+<label>コマーシャル or コンシューマー確認</label><br/>
+<label><input id="commercial_cb" type="checkbox"/> コマーシャル</label><br/>
+<label><input id="consumer_cb" type="checkbox"/> コンシューマー</label>
+</div><div class="form-group">
+<label for="tag">■TAG#</label>
+<textarea id="tag" oninput="autoResize(this)" rows="9"></textarea>
+</div><div class="form-group">
+<label for="case">■CASE#</label>
+<textarea id="case" oninput="autoResize(this)" rows="9"></textarea>
+</div><div class="form-group">
+<label for="model">■機種:</label>
+<textarea id="model" oninput="autoResize(this)" rows="9"></textarea>
+</div><div class="form-group">
+<label for="question">■聞きたい事:</label>
+<textarea id="question" oninput="autoResize(this)" rows="9"></textarea>
+</div><div class="form-group">
+<label for="reason">■理由/背景:</label>
+<textarea id="reason" oninput="autoResize(this)" rows="9"></textarea>
+</div><div class="form-group">
+<label for="os">■OS情報:</label>
+<textarea id="os" oninput="autoResize(this)" rows="9"></textarea>
+</div><div class="form-group">
+<label for="phenomenon">■現象:</label>
+<textarea id="phenomenon" oninput="autoResize(this)" rows="9"></textarea>
+</div><div class="form-group">
+<label for="since">■いつから:</label>
+<textarea id="since" oninput="autoResize(this)" rows="9"></textarea>
+</div><div class="form-group">
+<label for="frequency">■頻度:</label>
+<textarea id="frequency" oninput="autoResize(this)" rows="9"></textarea>
+</div><div class="form-group">
+<label for="other">■その他情報:</label>
+<textarea id="rec_other" oninput="autoResize(this)" rows="9" style="min-height: 864px"></textarea>
+</div>
+<div class="form-group">
+<button id="copyButton" onclick="copyRecChat()">Copy REC Chat</button>
+</div>
+</div>
+<script>
+  function autoResize(el) {
+    el.style.height = "auto";
+    el.style.height = (el.scrollHeight) + "px";
+  }
+
+  function autoFill() {
+    const inputText = document.getElementById("inputText").value;
+    const lines = inputText.split('\n');
+    const data = {};
+    let isolationIndex = -1;
+
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].startsWith("実施した切り分け：")) {
+        isolationIndex = i;
+        break;
+      }
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+      if (i === isolationIndex) {
+        data["実施した切り分け"] = lines.slice(i).join('\n').replace("実施した切り分け：", "").trim();
+        break;
+      }
+      const match = lines[i].match(/^(.+?)(：|#)\s*(.+)$/);
+      if (match) {
+        const key = match[1].trim();
+        const value = match[3].trim();
+        data[key] = value;
+      }
+    }
+
+    const keys = {
+      'tag': 'TAG',
+      'case': 'CASE',
+      'model': '機種名',
+      'dtc': 'DTC使用有無',
+      'transcript': '継続Transcript',
+      'question': '聞きたいこと',
+      'limit': '回答リミット時間',
+      'phenomenon': '現象',
+      'isolation': '実施した切り分け',
+      'since': 'いつから',
+      'os': 'OS情報',
+      'frequency': '頻度'
+    };
+
+    for (let id in keys) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.value = data[keys[id]] || '';
+        autoResize(el);
+      }
+    }
+
+    if (data['TAG'] && !document.getElementById('rec_tag').value) document.getElementById('rec_tag').value = data['TAG'];
+    if (data['CASE'] && !document.getElementById('rec_case').value) document.getElementById('rec_case').value = data['CASE'];
+    if (data['機種名'] && !document.getElementById('rec_model').value) document.getElementById('rec_model').value = data['機種名'];
+    if (data['聞きたいこと'] && !document.getElementById('rec_question').value) document.getElementById('rec_question').value = data['聞きたいこと'];
+    if (data['現象'] && !document.getElementById('rec_phenomenon').value) document.getElementById('rec_phenomenon').value = data['現象'];
+    if (data['いつから'] && !document.getElementById('rec_since').value) document.getElementById('rec_since').value = data['いつから'];
+    if (data['OS情報'] && !document.getElementById('rec_os').value) document.getElementById('rec_os').value = data['OS情報'];
+    if (data['頻度'] && !document.getElementById('rec_frequency').value) document.getElementById('rec_frequency').value = data['頻度'];
+
+    if (data['実施した切り分け']) {
+      const other = document.getElementById('rec_other');
+      if (!other.value.includes('【切り分け】')) {
+        other.value += (other.value ? '\n' : '') + '【切り分け】\n' + data['実施した切り分け'];
+      }
+    }
+  }
+
+  document.querySelectorAll(".tab-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+      document.querySelectorAll(".tab-content").forEach((c) => c.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
+    });
+  });
+
+autoResize(document.getElementById('rec_tag'));
+autoResize(document.getElementById('rec_case'));
+autoResize(document.getElementById('rec_model'));
+autoResize(document.getElementById('rec_os'));
+autoResize(document.getElementById('rec_since'));
+autoResize(document.getElementById('rec_frequency'));
+autoResize(document.getElementById('rec_question'));
+autoResize(document.getElementById('rec_reason'));
+autoResize(document.getElementById('rec_other'));</script>
+<script>
+function copyRecChat() {
+  const commercial = document.getElementById("commercial_cb").checked;
+  const consumer = document.getElementById("consumer_cb").checked;
+  if (!commercial && !consumer) {
+    alert("保守を確認して");
+    return;
+  }
+
+  const fields = [
+    { id: "rec_tag", label: "■TAG#" },
+    { id: "rec_case", label: "■CASE#" },
+    { id: "rec_model", label: "■機種:" },
+    { id: "rec_question", label: "■聞きたい事:" },
+    { id: "rec_reason", label: "■理由/背景:" },
+    { id: "rec_os", label: "■OS情報:" },
+    { id: "rec_phenomenon", label: "■現象:" },
+    { id: "rec_since", label: "■いつから:" },
+    { id: "rec_frequency", label: "■頻度:" },
+    { id: "rec_other", label: "■その他情報:" }
+  ];
+
+  let result = "";
+  fields.forEach(f => {
+    const el = document.getElementById(f.id);
+    if (el && el.value.trim()) {
+      result += f.label + " " + el.value.trim() + "\n";
+    }
+  });
+
+  navigator.clipboard.writeText(result.trim())
+    .then(() => {
+      const btn = document.getElementById("copyButton");
+      const original = btn.textContent;
+      btn.textContent = "Copied!";
+      setTimeout(() => { btn.textContent = original; }, 2000);
+    })
+    .catch(err => alert("コピーに失敗しました: " + err));
+}
+</script>
+</body>
+</html>
