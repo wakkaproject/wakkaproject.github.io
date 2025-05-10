@@ -240,15 +240,15 @@ function copyFormattedText() {
   const lines = text.split('\n');
 
   const aliasMap = {
-    "TAG#": ["TAG", "TAG#", "・TAG"],
-    "CASE#": ["CASE", "CASE#", "・CASE"],
+    "tag#": ["tag", "tag#", "・tag", "・tag#", "・tag：", "・tag:", "ｔａｇ＃"],
+    "case#": ["case", "case#", "・case", "・case#", "ｃａｓｅ"],
     "機種名：": ["機種名", "機種名：", "機種：", "機種"],
-    "DTC使用有無：": ["DTC", "DTC使用", "DTC使用有無", "DTC："],
-    "継続Transcript#": ["継続Transcript#", "継続Transcript"],
+    "dtc使用有無：": ["dtc", "dtc使用", "dtc使用有無", "dtc："],
+    "継続transcript#": ["継続transcript#", "継続transcript"],
     "機種:": ["機種:"],
     "聞きたいこと:": ["聞きたいこと:", "聞きたい事", "聞きたいこと"],
     "回答リミット時間：": ["回答リミット", "回答リミット時間："],
-    "OS情報:": ["OS", "OS:", "OS情報:"],
+    "os情報:": ["os", "os:", "os情報:"],
     "現象:": ["現象", "現象:"],
     "いつから:": ["いつから", "いつから:"],
     "頻度:": ["頻度", "頻度:"],
@@ -259,23 +259,19 @@ function copyFormattedText() {
   let currentKey = null;
 
   for (let line of lines) {
-    let trimmed = line.trim();
-    if (trimmed.startsWith("■") || trimmed.startsWith("・")) {
-      trimmed = trimmed.replace(/^■|^・/, "");
-      let matched = false;
-      for (const [key, patterns] of Object.entries(aliasMap)) {
-        if (patterns.some(p => trimmed.startsWith(p))) {
-          currentKey = key;
-          fields[key] = trimmed.replace(patterns.find(p => trimmed.startsWith(p)), "").trim();
-          matched = true;
-          break;
-        }
+    let raw = line.trim();
+    let normalized = raw.normalize('NFKC').toLowerCase().replace(/^■|^・/, "");
+    let matched = false;
+    for (const [key, patterns] of Object.entries(aliasMap)) {
+      if (patterns.some(p => normalized.startsWith(p))) {
+        currentKey = key;
+        fields[key] = raw.replace(/^■|^・/, "").replace(patterns.find(p => normalized.startsWith(p)), "").trim();
+        matched = true;
+        break;
       }
-      if (!matched && currentKey) {
-        fields[currentKey] += "\n" + trimmed;
-      }
-    } else if (currentKey) {
-      fields[currentKey] += "\n" + trimmed;
+    }
+    if (!matched && currentKey) {
+      fields[currentKey] += "\n" + raw.trim();
     }
   }
 
@@ -283,12 +279,12 @@ function copyFormattedText() {
 
   const formatted = 
 `■保守確認！
-■TAG#${get("TAG#")}
-■CASE#${get("CASE#")}
+■TAG#${get("tag#")}
+■CASE#${get("case#")}
 ■機種名:${get("機種名：")}
 ■聞きたい事:${get("聞きたいこと:")}
 ■理由/背景：
-■OS情報:${get("OS情報:")}
+■OS情報:${get("os情報:")}
 ■現象:${get("現象:")}
 ■いつから:${get("いつから:")}
 ■頻度:${get("頻度:")}
@@ -297,7 +293,12 @@ function copyFormattedText() {
 ${get("実施した切り分け:")}`;
 
   navigator.clipboard.writeText(formatted).then(() => {
-    const btn = document.querySelector('button[onclick="copyFormattedText()"]'); if (btn) { const original = btn.textContent; btn.textContent = "Copied!"; setTimeout(() => { btn.textContent = original; }, 1500); }
+    const btn = document.querySelector('button[onclick="copyFormattedText()"]');
+    if (btn) {
+      const original = btn.textContent;
+      btn.textContent = "Copied!";
+      setTimeout(() => { btn.textContent = original; }, 1500);
+    }
   });
 }
 </script></body>
