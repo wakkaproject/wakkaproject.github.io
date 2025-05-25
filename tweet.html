@@ -1,173 +1,272 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NFTポストジェネレーター</title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-    textarea { width: 100%; margin-top: 10px; }
-    button { margin: 5px 5px 10px 0; }
-    input[type="text"] { width: 100%; margin-bottom: 10px; }
-  </style>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ <title>NFTポストジェネレーター</title>
+ <style>
+ body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+ textarea { width: 100%; margin-top: 10px; }
+ button { margin: 5px 5px 10px 0; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
+ .input-container { display: flex; gap: 10px; margin-bottom: 10px; }
+ .input-container input { width: 50%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
+ .url-buttons { display: flex; flex-wrap: wrap; gap: 5px; margin: 10px 0; }
+ .url-button { display: flex; align-items: center; gap: 5px; }
+ .url-button button { padding: 6px 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; background: #f9f9f9; cursor: pointer; }
+ .url-button button:hover { background: #e0e0e0; }
+ .url-button .delete-btn { padding: 6px; font-size: 12px; color: red; border: none; background: none; cursor: pointer; }
+ .url-button .delete-btn:hover { color: darkred; }
+ </style>
 </head>
 <body>
-  <h2>NFTポストジェネレーター</h2>
-  <label>作品URL：</label><br/>
-  <input type="text" id="urlInput" placeholder="OpenSeaなどのURLを入力" /><br/>
-  <label><input type="checkbox" id="catTag" /> 猫タグを追加する</label><br/>
-  <button onclick="generatePost('gm')">GM</button>
-  <button onclick="generatePost('cat')">🐱ねこ🐱</button>
-  <button onclick="generatePost('art')">ART</button><br/>
-  <textarea id="output" rows="4" placeholder="英語投稿がここに表示されます"></textarea><br/>
-  <button onclick="copyText()">コピー</button>
-  <button onclick="tweetText()">ツイート</button>
-  <textarea id="translated" rows="3" placeholder="翻訳結果がここに表示されます"></textarea>
+ <h2>NFTポストジェネレーター</h2>
+ <!-- 1. ツイート生成ボタンと猫タグ -->
+ <button onclick="generateAITweet()">ツイート生成</button><br/>
+ <label><input type="checkbox" id="catTag" /> 猫タグを追加する</label><br/>
+ <!-- 2. URLボタン（猫タグの下に横並びで表示） -->
+ <div class="url-buttons" id="urlButtons"></div>
+ <!-- 3. ツイートボックス＋ボタン -->
+ <textarea id="output" rows="4" placeholder="英語投稿がここに表示されます"></textarea><br/>
+ <button onclick="copyText()">コピー</button>
+ <button onclick="clearOutput()">クリア</button>
+ <button onclick="postTweet()">つぶやく</button>
+ <!-- 4. 翻訳ボックス -->
+ <textarea id="translated" rows="3" placeholder="日本語版ツイートがここに表示されます"></textarea>
+ <!-- 5. URL追加 -->
+ <label>URL追加：</label><br/>
+ <div class="input-container">
+  <input type="text" id="urlName" placeholder="ボタン名（例: WAKKA）" />
+  <input type="text" id="urlInput" placeholder="OpenSeaなどのURL" />
+ </div>
+ <button onclick="addUrl()">URL追加</button>
+ <button onclick="clearUrlInputs()">クリア</button>
+ <button onclick="downloadUrls()">URLリストをダウンロード</button>
 
 <script>
-  const gmMessages = [
-    "Good morning! Wishing you a calm and productive day.",
-    "Start the day with a smile and gentle thoughts.",
-    "Good morning to all creators and dreamers!",
-    "Hope today brings you inspiration and peace.",
-    "Fresh morning, fresh mindset.",
-    "Take it slow this morning. You’re doing great.",
-    "Rise and breathe. One step at a time.",
-    "Let the sunlight guide your morning thoughts.",
-    "Small moments matter today. Good morning.",
-    "Stay warm and grounded this morning.",
-    "A soft beginning is a strong choice.",
-    "Wishing you gentle progress today.",
-    "Hello to a brand new day!",
-    "Your pace is perfect. Good morning.",
-    "Quiet mornings lead to creative days.",
-    "Take care of your thoughts this morning.",
-    "Breathe. You’re here, and that’s enough.",
-    "No pressure. Just presence. GM.",
-    "New light, new hope. Good morning.",
-    "Let gratitude shape your morning.",
-    "A simple ‘good morning’ can change the day.",
-    "Have a meaningful morning, no matter the pace.",
-    "You are welcomed by the day. GM!",
-    "Trust in small beginnings.",
-    "Even grey skies bring soft light. GM.",
-    "Stretch, smile, and rise. That’s enough.",
-    "The sun showed up. So did you.",
-    "Soft mornings win the long game.",
-    "Let’s greet this day kindly.",
-    "A peaceful start creates a peaceful mind."
-  ];
+ // ツイートテンプレート（英語と日本語）
+ const toneTemplates = {
+  all: [
+   { en: "Discover this stunning NFT, a true gem for collectors! {url} #NFT #NFTArt #PFP", ja: "この素晴らしいNFTをチェック！コレクターの宝物！ {url} #NFT #NFTArt #PFP" },
+   { en: "Check out this unique NFT that’s full of character! {url} #NFT #NFTArt #PFP", ja: "個性あふれるこのユニークなNFTを見て！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a work of art you’ll want in your collection! {url} #NFT #NFTArt #PFP", ja: "このNFTはコレクションに欲しい芸術作品！ {url} #NFT #NFTArt #PFP" },
+   { en: "Dive into the world of NFTs with this amazing piece! {url} #NFT #NFTArt #PFP", ja: "この素晴らしい作品でNFTの世界に飛び込もう！ {url} #NFT #NFTArt #PFP" },
+   { en: "A one-of-a-kind NFT waiting to be yours! {url} #NFT #NFTArt #PFP", ja: "唯一無二のNFTがあなたを待ってる！ {url} #NFT #NFTArt #PFP" },
+   { en: "Explore the creativity behind this awesome NFT! {url} #NFT #NFTArt #PFP", ja: "このNFTのクリエイティブな魅力を探ろう！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT brings something special to the blockchain! {url} #NFT #NFTArt #PFP", ja: "ブロックチェーンに特別な輝きをもたらすNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Get ready to fall in love with this incredible NFT! {url} #NFT #NFTArt #PFP", ja: "この驚くべきNFTに一目惚れする準備を！ {url} #NFT #NFTArt #PFP" },
+   { en: "A masterpiece in digital form—check out this NFT! {url} #NFT #NFTArt #PFP", ja: "デジタル形式の傑作、このNFTをチェック！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is packed with style and originality! {url} #NFT #NFTArt #PFP", ja: "スタイルと独創性に溢れたNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Don’t sleep on this gorgeous NFT creation! {url} #NFT #NFTArt #PFP", ja: "この美しいNFTを見逃すな！ {url} #NFT #NFTArt #PFP" },
+   { en: "A fresh addition to the NFT world—take a look! {url} #NFT #NFTArt #PFP", ja: "NFTの世界に新登場！チェックして！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is all about creativity and connection! {url} #NFT #NFTArt #PFP", ja: "クリエイティブでつながるこのNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Add some flair to your collection with this NFT! {url} #NFT #NFTArt #PFP", ja: "コレクションに彩りを加えるNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Behold the beauty of this digital artwork! {url} #NFT #NFTArt #PFP", ja: "このデジタルアートの美しさに感動！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a must-see for any art lover! {url} #NFT #NFTArt #PFP", ja: "アート好き必見のNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A vibrant NFT that stands out from the crowd! {url} #NFT #NFTArt #PFP", ja: "他のNFTとは一線を画す鮮やかな作品！ {url} #NFT #NFTArt #PFP" },
+   { en: "Check out the story behind this unique NFT! {url} #NFT #NFTArt #PFP", ja: "このNFTに込められたストーリーをチェック！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is pure digital magic—don’t miss it! {url} #NFT #NFTArt #PFP", ja: "デジタルマジックなNFTを見逃すな！ {url} #NFT #NFTArt #PFP" },
+   { en: "A bold and beautiful NFT for your collection! {url} #NFT #NFTArt #PFP", ja: "大胆で美しいNFTがコレクションに！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a perfect blend of art and tech! {url} #NFT #NFTArt #PFP", ja: "アートとテクノロジーが融合したNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Discover the charm of this one-of-a-kind NFT! {url} #NFT #NFTArt #PFP", ja: "このNFTの魅力にハマるよ！ {url} #NFT #NFTArt #PFP" },
+   { en: "A digital treasure waiting to be explored! {url} #NFT #NFTArt #PFP", ja: "デジタルな宝物がここに！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a game-changer in the digital world! {url} #NFT #NFTArt #PFP", ja: "NFTの世界を変えるこの作品！ {url} #NFT #NFTArt #PFP" },
+   { en: "Fall in love with the artistry of this NFT! {url} #NFT #NFTArt #PFP", ja: "このNFTの芸術性に心奪われる！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is too cool to pass up—check it out! {url} #NFT #NFTArt #PFP", ja: "めっちゃクールなNFTをチェック！ {url} #NFT #NFTArt #PFP" },
+   { en: "A fun and funky NFT that’s ready to shine! {url} #NFT #NFTArt #PFP", ja: "楽しくてユニークなNFTが登場！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a slice of digital history! {url} #NFT #NFTArt #PFP", ja: "デジタルヒストリーの一部、このNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Get ready for a visual treat with this NFT! {url} #NFT #NFTArt #PFP", ja: "このNFTは視覚の楽しみそのもの！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is bursting with personality! {url} #NFT #NFTArt #PFP", ja: "個性爆発のNFTがここに！ {url} #NFT #NFTArt #PFP" },
+   { en: "A creative masterpiece in the NFT space! {url} #NFT #NFTArt #PFP", ja: "NFT空間のクリエイティブな傑作！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is your ticket to digital art glory! {url} #NFT #NFTArt #PFP", ja: "デジタルアートの栄光、このNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Check out this NFT—it’s a total vibe! {url} #NFT #NFTArt #PFP", ja: "このNFT、めっちゃイケてるよ！ {url} #NFT #NFTArt #PFP" },
+   { en: "A unique NFT that’s sure to turn heads! {url} #NFT #NFTArt #PFP", ja: "注目を集めるユニークなNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a digital dream come true! {url} #NFT #NFTArt #PFP", ja: "デジタルな夢が詰まったNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Explore this NFT’s one-of-a-kind design! {url} #NFT #NFTArt #PFP", ja: "このNFTのユニークなデザインをチェック！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a collector’s dream—don’t miss it! {url} #NFT #NFTArt #PFP", ja: "コレクターの夢、このNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A fresh and exciting NFT to add to your stash! {url} #NFT #NFTArt #PFP", ja: "新鮮でエキサイティングなNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is pure art with a digital twist! {url} #NFT #NFTArt #PFP", ja: "デジタルにアートを、このNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Get lost in the beauty of this NFT creation! {url} #NFT #NFTArt #PFP", ja: "このNFTの美しさにハマる！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a must-have for any crypto art fan! {url} #NFT #NFTArt #PFP", ja: "クリプトアートファンのためのNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A bold NFT that’s ready to make waves! {url} #NFT #NFTArt #PFP", ja: "波を起こす大胆なNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a perfect mix of style and substance! {url} #NFT #NFTArt #PFP", ja: "スタイルと本質が融合したNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Discover this NFT’s unique place in the blockchain! {url} #NFT #NFTArt #PFP", ja: "ブロックチェーンで輝くこのNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a digital delight you’ll love! {url} #NFT #NFTArt #PFP", ja: "デジタルな喜び、このNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A vibrant addition to the NFT universe! {url} #NFT #NFTArt #PFP", ja: "NFTユニバースの鮮やかな追加！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is all about bold creativity! {url} #NFT #NFTArt #PFP", ja: "大胆なクリエイティビティのNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Check out this NFT—it’s a true original! {url} #NFT #NFTArt #PFP", ja: "本物のオリジナル、このNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A stunning NFT that’s ready to steal the show! {url} #NFT #NFTArt #PFP", ja: "ショーを飾る見事なNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a piece of the future—grab it now! {url} #NFT #NFTArt #PFP", ja: "未来の一部、このNFTをゲット！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a spark of digital brilliance! {url} #NFT #NFTArt #PFP", ja: "デジタルな輝きを放つNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A creative NFT that’s ready to inspire! {url} #NFT #NFTArt #PFP", ja: "インスピレーションを与えるクリエイティブなNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a digital masterpiece waiting for you! {url} #NFT #NFTArt #PFP", ja: "あなたを待つデジタルな傑作NFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Check out this NFT’s bold and unique vibe! {url} #NFT #NFTArt #PFP", ja: "このNFTの大胆でユニークな雰囲気をチェック！ {url} #NFT #NFTArt #PFP" },
+   { en: "A gem of an NFT that’s pure eye candy! {url} #NFT #NFTArt #PFP", ja: "目の保養になるNFTの宝石！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a journey into digital art! {url} #NFT #NFTArt #PFP", ja: "デジタルアートへの旅、このNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A playful NFT that’s full of surprises! {url} #NFT #NFTArt #PFP", ja: "驚きに満ちた遊び心あるNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a digital keepsake you’ll cherish! {url} #NFT #NFTArt #PFP", ja: "大切にしたいデジタルな記念品NFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Get ready to be wowed by this NFT’s design! {url} #NFT #NFTArt #PFP", ja: "このNFTのデザインに驚く準備を！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a bold step into the future! {url} #NFT #NFTArt #PFP", ja: "未来への大胆な一歩、このNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A digital artwork that’s truly unforgettable! {url} #NFT #NFTArt #PFP", ja: "忘れられないデジタルアート作品！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a splash of color on the blockchain! {url} #NFT #NFTArt #PFP", ja: "ブロックチェーンに彩りを添えるNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Check out this NFT—it’s pure digital charm! {url} #NFT #NFTArt #PFP", ja: "純粋なデジタルな魅力、このNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A unique NFT that’s ready to shine bright! {url} #NFT #NFTArt #PFP", ja: "輝く準備ができたユニークなNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a collector’s paradise! {url} #NFT #NFTArt #PFP", ja: "コレクターの楽園、このNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A vibrant NFT that’s full of life! {url} #NFT #NFTArt #PFP", ja: "生命力あふれる鮮やかなNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a digital adventure waiting for you! {url} #NFT #NFTArt #PFP", ja: "あなたを待つデジタルな冒険NFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Discover the magic of this NFT creation! {url} #NFT #NFTArt #PFP", ja: "このNFTの魔法を発見！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a true original in every way! {url} #NFT #NFTArt #PFP", ja: "あらゆる面で本物のオリジナルNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A stunning NFT that’s ready to impress! {url} #NFT #NFTArt #PFP", ja: "感動 givenえる見事なNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a digital vibe you can’t resist! {url} #NFT #NFTArt #PFP", ja: "抵抗できないデジタルな雰囲気のNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A creative NFT that’s pure inspiration! {url} #NFT #NFTArt #PFP", ja: "純粋なインスピレーションのNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a masterpiece of modern art! {url} #NFT #NFTArt #PFP", ja: "現代アートの傑作、このNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Check out this NFT’s unique digital flair! {url} #NFT #NFTArt #PFP", ja: "このNFTのユニークなデジタルな魅力！ {url} #NFT #NFTArt #PFP" },
+   { en: "A bold NFT that’s full of surprises! {url} #NFT #NFTArt #PFP", ja: "驚きに満ちた大胆なNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a digital gem you’ll adore! {url} #NFT #NFTArt #PFP", ja: "愛さずにはいられないデジタルな宝石NFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A vibrant NFT that’s ready to stand out! {url} #NFT #NFTArt #PFP", ja: "目立つ準備ができている鮮やかなNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a journey into creativity! {url} #NFT #NFTArt #PFP", ja: "クリエイティビティへの旅、このNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A digital artwork that’s pure magic! {url} #NFT #NFTArt #PFP", ja: "純粋な魔法のデジタルアート！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a collector’s dream come true! {url} #NFT #NFTArt #PFP", ja: "コレクターの夢が叶うNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A playful NFT that’s full of charm! {url} #NFT #NFTArt #PFP", ja: "魅力たっぷりの遊び心あるNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a digital treasure for the ages! {url} #NFT #NFTArt #PFP", ja: "永遠のデジタルな宝物NFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Check out this NFT—it’s a work of genius! {url} #NFT #NFTArt #PFP", ja: "このNFTは天才の作品！チェックして！ {url} #NFT #NFTArt #PFP" },
+   { en: "A bold and vibrant NFT that’s pure art! {url} #NFT #NFTArt #PFP", ja: "純粋なアート、大胆で鮮やかなNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a digital wonder to behold! {url} #NFT #NFTArt #PFP", ja: "見るべきデジタルな驚異、このNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A unique NFT that’s ready to inspire! {url} #NFT #NFTArt #PFP", ja: "インスピレーションを与えるユニークなNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a spark of digital creativity! {url} #NFT #NFTArt #PFP", ja: "デジタルなクリエイティビティの火花NFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A stunning NFT that’s full of personality! {url} #NFT #NFTArt #PFP", ja: "個性あふれる見事なNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a digital delight for collectors! {url} #NFT #NFTArt #PFP", ja: "コレクターのためのデジタルな喜びNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A vibrant NFT that’s ready to make history! {url} #NFT #NFTArt #PFP", ja: "歴史を作る準備ができている鮮やかなNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a masterpiece of digital art! {url} #NFT #NFTArt #PFP", ja: "デジタルアートの傑作、このNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "Check out this NFT’s bold creative spirit! {url} #NFT #NFTArt #PFP", ja: "このNFTの大胆なクリエイティブ精神をチェック！ {url} #NFT #NFTArt #PFP" },
+   { en: "A digital artwork that’s truly one-of-a-kind! {url} #NFT #NFTArt #PFP", ja: "本当に唯一無二のデジタルアート！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a vibrant addition to any collection! {url} #NFT #NFTArt #PFP", ja: "どんなコレクションにも鮮やかな追加NFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A bold NFT that’s ready to shine! {url} #NFT #NFTArt #PFP", ja: "輝く準備ができている大胆なNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a digital journey worth taking! {url} #NFT #NFTArt #PFP", ja: "挑戦する価値のあるデジタルな旅NFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A creative NFT that’s full of wonder! {url} #NFT #NFTArt #PFP", ja: "驚きに満ちたクリエイティブなNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a digital gem for art lovers! {url} #NFT #NFTArt #PFP", ja: "アート愛好家のためのデジタルな宝石NFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "A stunning NFT that’s ready to captivate! {url} #NFT #NFTArt #PFP", ja: "魅了する準備ができている見事なNFT！ {url} #NFT #NFTArt #PFP" },
+   { en: "This NFT is a piece of digital history! {url} #NFT #NFTArt #PFP", ja: "デジタルな歴史の一部、このNFT！ {url} #NFT #NFTArt #PFP" }
+  ]
+ };
 
-  const catMessages = [
-    "Good morning from the NFT cativerse 🐾",
-    "Woke up with my rescue cat and good vibes.",
-    "Another day, another meow on the blockchain.",
-    "My cat approves of this morning mint 🐱",
-    "Sunshine, coffee, and cats in my wallet ☀️☕🐾",
-    "Rescue cats deserve the blockchain too.",
-    "Minting purrfection this morning.",
-    "Cat vibes only this fine morning 🐈",
-    "Holding rare cats and calm thoughts.",
-    "Gm from my digital feline family.",
-    "Starting the day with whiskers and WAG... wait, just whiskers 🐾",
-    "Minted another pixel kitty. Meow!",
-    "NFT + cat = happiness 🐱💎",
-    "A soft purr for this bright day.",
-    "Every NFT collection needs a cat.",
-    "Digital fur, real love.",
-    "Cat NFTs = ultimate morning motivation.",
-    "Blockchain furball says gm 🐾",
-    "Woke up to new mints and a meow.",
-    "Even cats are bullish today.",
-    "Nothing beats a rescue cat drop.",
-    "Gm, from my couch and my cat.",
-    "The cat sat on my keyboard, minted itself.",
-    "NFTs + nap = cat-approved productivity.",
-    "One paw at a time on the blockchain 🐾",
-    "Feline vibes in the metaverse.",
-    "Started the day with purring and pixels.",
-    "The blockchain is better with whiskers.",
-    "Every collection needs a rescue.",
-    "Cat morning, clean mint, good vibes."
-  ];
+ // URL管理
+ let urls = JSON.parse(localStorage.getItem('nftUrls')) || [];
 
-  const artMessages = [
-    "New day, new art. Let's mint something beautiful.",
-    "Creating quietly this morning.",
-    "Art never sleeps. But I try to.",
-    "Each morning is a blank canvas.",
-    "Mint with purpose, create with peace.",
-    "Woke up with a new concept. Let’s go.",
-    "NFT art is emotion on the blockchain.",
-    "Brushes, pixels, coffee. Let's build.",
-    "Another chance to create something rare.",
-    "Create from the heart, mint with love.",
-    "Gm artists. Let’s make the space beautiful.",
-    "Sketching out ideas with morning light.",
-    "Art brings peace. Mint brings motion.",
-    "Today’s drop starts with intention.",
-    "Let your lines speak for you.",
-    "Another brushstroke in the chain.",
-    "Good art takes time, and coffee.",
-    "Build slowly. Mint boldly.",
-    "Feeling inspired by color this morning.",
-    "Texture and thought lead the way.",
-    "Each pixel is a story.",
-    "One render at a time.",
-    "The chain remembers beautiful things.",
-    "Gm to artists minting peace, not hype.",
-    "Digital canvas, emotional truth.",
-    "No rush. Let art arrive.",
-    "Gm. Let’s fill today with honest creation.",
-    "Sketch it. Feel it. Mint it.",
-    "One day, one artwork, one truth.",
-    "Create to express, not impress."
-  ];
+ function saveUrls() {
+  localStorage.setItem('nftUrls', JSON.stringify(urls));
+  updateUrlButtons();
+ }
 
-  const key = "d3CTqWhc7Yc0ygX0ozh7HLDzMFoPWQ5qPH9xSEot0lOlLkZNFMc3JQQJ99BDACxCCsyXJ3w3AAAbACOGr5CZ";
-  const region = "japanwest";
-
-  function generatePost(type) {
-    const url = document.getElementById("urlInput").value.trim();
-    const cat = document.getElementById("catTag").checked;
-    const tags = "#NFT #NFTArt #PFP" + ((type === "cat" || cat) ? " #CatNFT #NFTCats #RescueCat" : "");
-
-    let list = type === 'cat' ? catMessages : type === 'art' ? artMessages : gmMessages;
-    const msg = list[Math.floor(Math.random() * list.length)];
-    const full = [msg, url, tags].filter(Boolean).join("\n");
-    document.getElementById("output").value = full;
-    translate(full);
+ function addUrl() {
+  const name = document.getElementById('urlName').value.trim();
+  const url = document.getElementById('urlInput').value.trim();
+  if (name && url && !urls.some(item => item.url === url)) {
+   urls.push({ name, url });
+   saveUrls();
+   document.getElementById('urlName').value = '';
+   document.getElementById('urlInput').value = '';
+  } else {
+   alert('名前とURLを入力してください（重複URLは不可）。');
   }
+ }
 
-  function copyText() {
-    const text = document.getElementById("output").value;
-    navigator.clipboard.writeText(text);
-  }
+ function deleteUrl(index) {
+  urls.splice(index, 1);
+  saveUrls();
+ }
 
-  function tweetText() {
-    const text = document.getElementById("output").value;
-    const encoded = encodeURIComponent(text);
-    window.open(`https://twitter.com/intent/tweet?text=${encoded}`, '_blank');
-  }
+ function appendUrl(url) {
+  const tweet = document.getElementById('output').value || '';
+  const translated = document.getElementById('translated').value || '';
+  const newTweet = tweet.includes('{url}') ? tweet.replace('{url}', url) : `${tweet}\n${url}`;
+  const newTranslated = translated.includes('{url}') ? translated.replace('{url}', url) : `${translated}\n${url}`;
+  document.getElementById('output').value = newTweet;
+  document.getElementById('translated').value = newTranslated;
+ }
 
-  async function translate(text) {
-    try {
-      const res = await fetch("https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=ja", {
-        method: "POST",
-        headers: {
-          "Ocp-Apim-Subscription-Key": key,
-          "Ocp-Apim-Subscription-Region": region,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify([{ Text: text }])
-      });
-      const data = await res.json();
-      document.getElementById("translated").value = data[0].translations[0].text || "翻訳失敗";
-    } catch {
-      document.getElementById("translated").value = "翻訳失敗";
-    }
+ function updateUrlButtons() {
+  const urlButtons = document.getElementById('urlButtons');
+  urlButtons.innerHTML = '';
+  urls.forEach((item, index) => {
+   const div = document.createElement('div');
+   div.className = 'url-button';
+   div.innerHTML = `<button onclick="appendUrl('${item.url}')">${item.name}</button> <button class="delete-btn" onclick="deleteUrl(${index})">×</button>`;
+   urlButtons.appendChild(div);
+  });
+ }
+
+ // AIツイート生成
+ function generateAITweet() {
+  const cat = document.getElementById('catTag').checked;
+  const template = toneTemplates.all[Math.floor(Math.random() * toneTemplates.all.length)];
+
+  const tagsEn = "#NFT #NFTArt #PFP" + (cat ? " #CatNFT #NFTCats #RescueCat" : "");
+  const tagsJa = "#NFT #NFTArt #PFP" + (cat ? " #CatNFT #NFTCats #RescueCat" : "");
+  const fullEn = [template.en, tagsEn].filter(Boolean).join('\n');
+  const fullJa = [template.ja, tagsJa].filter(Boolean).join('\n');
+
+  document.getElementById('output').value = fullEn;
+  document.getElementById('translated').value = fullJa;
+ }
+
+ // テキストコピー
+ function copyText() {
+  const text = document.getElementById('output').value;
+  if (text) {
+   navigator.clipboard.writeText(text).then(() => {
+    alert('テキストをコピーしました！');
+   }).catch(err => {
+    console.error('コピー失敗:', err);
+    alert('コピーに失敗しました。');
+   });
+  } else {
+   alert('コピーするテキストがありません！');
   }
+ }
+
+ // ボックスクリア
+ function clearOutput() {
+  document.getElementById('output').value = '';
+  document.getElementById('translated').value = '';
+ }
+
+ function clearUrlInputs() {
+  document.getElementById('urlName').value = '';
+  document.getElementById('urlInput').value = '';
+ }
+
+ // ダウンロード機能（URLリストのみ）
+ function downloadJsonFile(content, fileName) {
+  const blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  a.click();
+  URL.revokeObjectURL(url);
+ }
+
+ function downloadUrls() {
+  if (urls.length === 0) {
+   alert('URLリストが空です！');
+   return;
+  }
+  downloadJsonFile(urls, 'urls.json');
+ }
+
+ // Twitterでツイート
+ function postTweet() {
+  const tweet = document.getElementById('output').value;
+  if (!tweet || tweet.length > 280) {
+   alert('ツイートが空または280文字を超えています！');
+   return;
+  }
+  const encodedTweet = encodeURIComponent(tweet);
+  window.open(`https://x.com/intent/tweet?text=${encodedTweet}`, '_blank');
+ }
+
+ // 初期化
+ updateUrlButtons();
 </script>
 </body>
 </html>
